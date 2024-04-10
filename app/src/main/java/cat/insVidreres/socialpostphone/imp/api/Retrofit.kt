@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class Retrofit {
     companion object {
         private const val BASE_URL = "http://192.168.56.2:8080/"
+        private const val POK_URL = "https://pokeapi.co/api/v2/"
 
         fun loginUser(user: User, onSuccess: (Boolean) -> Unit, onFailure: () -> Unit) {
 
@@ -41,6 +42,7 @@ class Retrofit {
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
+
 
             val userService = retrofit.create(UserService::class.java)
 

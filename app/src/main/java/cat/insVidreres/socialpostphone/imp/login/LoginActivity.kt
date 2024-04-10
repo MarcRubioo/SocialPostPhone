@@ -7,9 +7,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import cat.insVidreres.socialpostphone.imp.api.UserService
 import cat.insVidreres.socialpostphone.imp.databinding.ActivityLoginBinding
 import cat.insVidreres.socialpostphone.imp.mainActivity.MainActivity
 import cat.insVidreres.socialpostphone.imp.register.RegisterActivity
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -17,6 +20,15 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /*val service = UserService.RetrofitServiceFactory.makeRetrofitService()*/
+
+        lifecycleScope.launch{
+/*            val pokemons= service.login()
+            println("Social  |  $pokemons")*/
+
+            viewModel.loginUserProva("marc","cnaiouqiow")
+        }
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)

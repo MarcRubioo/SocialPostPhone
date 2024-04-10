@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import cat.insVidreres.socialpostphone.imp.api.Retrofit
+import cat.insVidreres.socialpostphone.imp.api.UserService
 import cat.insVidreres.socialpostphone.imp.entity.User
 
 
@@ -28,4 +29,16 @@ class ViewModelLogin: ViewModel() {
             _errorMessage.postValue("Error al iniciar sesiónnn")
         })
     }
+
+    suspend fun loginUserProva(email: String, password: String) {
+        val user = User(null,email, password,null,null,null)
+
+        val service = UserService.RetrofitServiceFactory.makeRetrofitService()
+
+        val prova = service.loginProva(user)
+        println("Social  |  $prova")
+
+    }
+
+
 }
