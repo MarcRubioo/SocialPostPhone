@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -66,6 +67,22 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.7.2")
     implementation ("com.squareup.retrofit2:converter-gson:2.7.2")
     implementation ("com.squareup.okhttp3:okhttp:3.6.0")
+
+    //FireBase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation("com.google.firebase:firebase-analytics")
+
+    //Firebase Auth
+    implementation("com.google.firebase:firebase-auth")
+
+    //FireStore
+    implementation("com.google.firebase:firebase-firestore:24.10.3")
+
+    //FirebaseCore
+    implementation ("com.google.firebase:firebase-core:20.0.1")
+
+    //Cloud Storage
+    implementation ("com.google.firebase:firebase-storage:20.0.0")
 
 
     testImplementation("junit:junit:4.13.2")

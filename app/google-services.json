@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "516807333726",
+    "project_id": "social-post-m13",
+    "storage_bucket": "social-post-m13.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:516807333726:android:ad03ec3770e008c9d621cf",
+        "android_client_info": {
+          "package_name": "cat.insVidreres.socialpostphone.imp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlD8jtd92oLhpUXwCCei_yRglx1DfvP7s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

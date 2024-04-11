@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import cat.insVidreres.socialpostphone.imp.api.Retrofit
+import cat.insVidreres.socialpostphone.imp.api.UserService
 import cat.insVidreres.socialpostphone.imp.entity.User
 
 
@@ -17,9 +18,8 @@ class ViewModelLogin: ViewModel() {
     val errorMessage: LiveData<String>
         get() = _errorMessage
 
-    fun loginUser(email: String, password: String) {
+/*    fun loginUser(email: String, password: String) {
         val user = User(null,email, password,null,null,null)
-
 
         Retrofit.loginUser(user, { success ->
             _loginSuccess.postValue(success)
@@ -27,5 +27,16 @@ class ViewModelLogin: ViewModel() {
         }, {
             _errorMessage.postValue("Error al iniciar sesiónnn")
         })
+    }*/
+
+    fun loginUser(email: String, password: String) {
+        Retrofit.loginUser(email, password, { success ->
+            _loginSuccess.postValue(success)
+            _errorMessage.postValue("Inicio correcto")
+        }, {
+            _errorMessage.postValue("Error al iniciar sesiónnn")
+        })
     }
+
+
 }
