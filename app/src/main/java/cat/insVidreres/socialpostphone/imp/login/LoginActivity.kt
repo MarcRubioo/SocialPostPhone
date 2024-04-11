@@ -20,16 +20,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        /*val service = UserService.RetrofitServiceFactory.makeRetrofitService()*/
-
-        lifecycleScope.launch{
-/*            val pokemons= service.login()
-            println("Social  |  $pokemons")*/
-
-            viewModel.loginUserProva("marc","cnaiouqiow")
-        }
-
+        
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
