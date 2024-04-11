@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class Retrofit {
     companion object {
-        private const val BASE_URL = "http://192.168.56.2:8080/"
+        private const val BASE_URL = "http://localhost:8080/"
 
         fun loginUser(user: User, onSuccess: (Boolean) -> Unit, onFailure: () -> Unit) {
 
@@ -53,9 +53,11 @@ class Retrofit {
                         val jsonResponse = response.body()
                         val userList = jsonResponse?.data
                         if (userList != null) {
-                            onSuccess(userList.isNotEmpty())
+                            onSuccess(true)
                         }
                     }
+
+                    Log.i("ISMAAMCAIGFMVSD;IZGVEs", "htbgudfzhjbdu9gfkgjbmzvudfgnmvzodvmzsk");
                 }
 
                 override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
