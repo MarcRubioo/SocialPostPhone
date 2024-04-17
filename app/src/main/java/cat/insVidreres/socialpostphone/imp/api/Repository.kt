@@ -9,7 +9,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class Retrofit {
+class Repository {
     companion object {
         private const val BASE_URL = "http://192.168.56.2:8080/api/"
 
@@ -55,22 +55,23 @@ class Retrofit {
             onFailure: () -> Unit
         ) {
 
-            val retrofit = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            val userService = retrofit.create(UserService::class.java)
-
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         FirebaseAuth.getInstance().currentUser?.getIdToken(true)
-                            ?.addOnCompleteListener {
-                                if (it.isSuccessful) {
-                                    var idToken = it.result.token
+                            ?.addOnCompleteListener { tokenTask ->
+                                if (tokenTask.isSuccessful) {
+                                    val idToken = tokenTask.result.token
+                                    println("Social  |  $idToken")
 
                                     if (idToken != null) {
+                                        val retrofit = Retrofit.Builder()
+                                            .baseUrl(BASE_URL)
+                                            .addConverterFactory(GsonConverterFactory.create())
+                                            .build()
+
+                                        val userService = retrofit.create(UserService::class.java)
+
                                         userService.login(idToken)
                                             .enqueue(object : Callback<JsonResponse> {
                                                 override fun onResponse(
@@ -81,7 +82,7 @@ class Retrofit {
                                                         val jsonResponse = response.body()
                                                         val userList = jsonResponse?.data
                                                         if (userList != null) {
-                                                            println(userList)
+                                                            println(response.body())
                                                             onSuccess(userList.isNotEmpty())
                                                         }
                                                     }
@@ -104,6 +105,7 @@ class Retrofit {
                     }
                 }
         }
+
 
         fun registerUser(user: User, onSuccess: (Boolean) -> Unit, onFailure: () -> Unit) {
 
