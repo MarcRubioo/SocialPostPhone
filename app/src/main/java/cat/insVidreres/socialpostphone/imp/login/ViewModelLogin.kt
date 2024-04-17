@@ -3,9 +3,7 @@ package cat.insVidreres.socialpostphone.imp.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import cat.insVidreres.socialpostphone.imp.api.Retrofit
-import cat.insVidreres.socialpostphone.imp.api.UserService
-import cat.insVidreres.socialpostphone.imp.entity.User
+import cat.insVidreres.socialpostphone.imp.api.Repository
 
 
 class ViewModelLogin: ViewModel() {
@@ -30,8 +28,7 @@ class ViewModelLogin: ViewModel() {
     }*/
 
     fun loginUser(email: String, password: String) {
-        Retrofit.loginUser(email, password, { success ->
-            println("Response:  $success")
+        Repository.loginUser(email, password, { success ->
             _loginSuccess.postValue(success)
             _errorMessage.postValue("Inicio correcto")
         }, {

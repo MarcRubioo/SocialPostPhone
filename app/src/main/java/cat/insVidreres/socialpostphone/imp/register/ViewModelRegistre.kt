@@ -3,7 +3,7 @@ package cat.insVidreres.socialpostphone.imp.register
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import cat.insVidreres.socialpostphone.imp.api.Retrofit
+import cat.insVidreres.socialpostphone.imp.api.Repository
 import cat.insVidreres.socialpostphone.imp.entity.User
 
 class ViewModelRegistre: ViewModel() {
@@ -19,7 +19,7 @@ class ViewModelRegistre: ViewModel() {
         val user = User(null,email, password, name, null,null)
 
 
-        Retrofit.registerUser(user, { success ->
+        Repository.registerUser(user, { success ->
             _registerSuccess.postValue(success)
             _errorMessage.postValue("Resgistro correcto")
         }, {
