@@ -15,8 +15,8 @@ class ViewModelRegistre: ViewModel() {
     val errorMessage: LiveData<String>
         get() = _errorMessage
 
-    fun registerUser(email: String, password: String, name: String, ) {
-        val user = User(null,email, password, name, null,null)
+    fun registerUser(email: String, password: String, name: String, img:String ) {
+        val user = User(null,email, password, name, null,null, null, img )
 
 
         Repository.registerUser(user, { success ->

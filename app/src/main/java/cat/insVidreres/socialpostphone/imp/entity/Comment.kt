@@ -1,7 +1,8 @@
 package cat.insVidreres.socialpostphone.imp.entity
 
 data class Comment (
-    var docName: String,
-    var userId: String,
-    var comment: String
+    var email: String,
+    var desc: String,
+    var commentAt: String,
+    var likes: MutableList<String>
 )
