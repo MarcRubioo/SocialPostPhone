@@ -37,7 +37,7 @@ class RegisterActivity : AppCompatActivity() {
                     binding.editTextRegisterEmail.text.toString(),
                     binding.editTextRegisterPassword.text.toString(),
                     binding.editTextTextRegisterName.text.toString(),
-                    ""
+
                 )
             } else {
                 Toast.makeText(this, "Llena todos los campos ", Toast.LENGTH_SHORT).show()
