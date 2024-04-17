@@ -2,33 +2,33 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/principalPostsFragment2"
+        android:id="@+id/homeFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Posts" />
-<!--        android:icon="@drawable/iconohome"-->
+        android:title="Home"
+        android:icon="@drawable/home"/>
 
     <item
-        android:id="@+id/addPostFragment2"
+        android:id="@+id/searchFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="AddPost" />
+        android:title="Buscar" />
 <!--        android:icon="@drawable/iconoadd"-->
 
     <item
-        android:id="@+id/perfilFragment2"
+        android:id="@+id/addPostFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Perfil" />
+        android:title="Añadir" />
 
     <item
-        android:id="@+id/perfilFragment2"
+        android:id="@+id/friendsFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Perfil" />
+        android:title="Amigos" />
 
     <item
-        android:id="@+id/perfilFragment2"
+        android:id="@+id/profileFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="Perfil" />
