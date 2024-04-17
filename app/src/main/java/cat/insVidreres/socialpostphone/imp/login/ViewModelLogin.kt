@@ -31,6 +31,7 @@ class ViewModelLogin: ViewModel() {
 
     fun loginUser(email: String, password: String) {
         Retrofit.loginUser(email, password, { success ->
+            println("Response:  $success")
             _loginSuccess.postValue(success)
             _errorMessage.postValue("Inicio correcto")
         }, {

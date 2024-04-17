@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class Retrofit {
     companion object {
-        private const val BASE_URL = "http://192.168.56.2:8080/api/"
+        private const val BASE_URL = "http://127.0.0.1:8080/api/"
 
 
 /*        fun loginUser(user: User, onSuccess: (Boolean) -> Unit, onFailure: () -> Unit) {
@@ -64,19 +64,23 @@ class Retrofit {
 
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
+                    println("ngifpsnug9bsvfop")
                     if (task.isSuccessful) {
                         FirebaseAuth.getInstance().currentUser?.getIdToken(true)
                             ?.addOnCompleteListener {
                                 if (it.isSuccessful) {
                                     var idToken = it.result.token
 
+                                    println("8507tuwr8tr09ew  ||  $idToken")
                                     if (idToken != null) {
+                                        println("after token null statement")
                                         userService.login(idToken)
                                             .enqueue(object : Callback<JsonResponse> {
                                                 override fun onResponse(
                                                     call: Call<JsonResponse>,
                                                     response: Response<JsonResponse>
                                                 ) {
+                                                    println("pppppppppppppp")
                                                     if (response.isSuccessful) {
                                                         val jsonResponse = response.body()
                                                         val userList = jsonResponse?.data
@@ -84,6 +88,8 @@ class Retrofit {
                                                             println(userList)
                                                             onSuccess(userList.isNotEmpty())
                                                         }
+                                                    } else {
+                                                        println("FAILURE GGGGGGGGGGGgg")
                                                     }
                                                 }
 

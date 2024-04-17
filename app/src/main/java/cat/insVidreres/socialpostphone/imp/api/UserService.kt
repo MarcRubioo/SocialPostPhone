@@ -6,6 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Header
 
 
 interface UserService {
@@ -13,7 +14,7 @@ interface UserService {
     fun login(@Body user: User): Call<JsonResponse>*/
 
     @POST("users/login")
-    fun login(@Body string: String): Call<JsonResponse>
+    fun login(@Header("idToken") string: String): Call<JsonResponse>
 
     @POST("users")
     fun register(@Body user: User): Call<JsonResponse>
