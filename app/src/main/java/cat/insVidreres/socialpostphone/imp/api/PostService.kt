@@ -1,5 +1,6 @@
 package cat.insVidreres.socialpostphone.imp.api
 
+import cat.insVidreres.socialpostphone.imp.entity.Post
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -14,8 +15,8 @@ interface PostService {
     fun getPosts(@Header("idToken") token: String): Call<JsonResponse>
 
     @POST("posts")
-    fun uploadPost(@Header("idToken") token: String, @Body post: POST): Call<JsonResponse>
+    fun uploadPost(@Header("idToken") token: String, @Body post: Post): Call<JsonResponse>
 
-    @PUT
-    fun uploadComment(@Header("idToken") token: String, @Body)
+    @PUT("post")
+    fun uploadComment(@Header("idToken") token: String, @Body post: Post): Call<JsonResponse>
 }
