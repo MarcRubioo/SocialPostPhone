@@ -6,6 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
 import retrofit2.http.Header
 
 
@@ -19,4 +20,6 @@ interface UserService {
     @POST("users")
     fun register(@Body user: User): Call<JsonResponse>
 
+    @GET("user")
+    fun getUserDetails(@Header("idToken") token: String, ): Call<JsonResponse>
 }

@@ -1,12 +1,12 @@
 package cat.insVidreres.socialpostphone.imp.entity
 
 data class Post(
+    var id: String,
     var email: String,
     var createdAt: String,
     var images: MutableList<String>,
     var description: String,
     var category: MutableList<String>,
-    var likes: MutableList<String>,
-    var comments: MutableList<Comment>
-
+    var likes: MutableList<String> = mutableListOf(),
+    var comments: MutableList<Comment> = mutableListOf()
 )
