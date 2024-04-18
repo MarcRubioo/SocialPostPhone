@@ -1,5 +1,6 @@
 package cat.insVidreres.socialpostphone.imp.login
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,8 +18,8 @@ class ViewModelLogin: ViewModel() {
         get() = _errorMessage
 
 
-    fun loginUser(email: String, password: String) {
-        Repository.loginUser(email, password, { success ->
+    fun loginUser(context: Context, email: String, password: String) {
+        Repository.loginUser(context, email, password, { success ->
             _loginSuccess.postValue(success)
             _errorMessage.postValue("Inicio correcto")
         }, {

@@ -50,6 +50,7 @@ class LoginActivity : AppCompatActivity() {
         binding.buttonToMain.setOnClickListener{
             if (binding.editTextTextLoginEmail.text.isNotBlank() && binding.editTextLoginPassword.text.isNotBlank()) {
                 viewModel.loginUser(
+                    this,
                     binding.editTextTextLoginEmail.text.toString(),
                     binding.editTextLoginPassword.text.toString()
                 )
