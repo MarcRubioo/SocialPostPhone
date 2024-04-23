@@ -2,8 +2,12 @@ package cat.insVidreres.socialpostphone.imp.api
 
 import android.content.Context
 import android.util.Log
+import cat.insVidreres.socialpostphone.imp.entity.Comment
+import cat.insVidreres.socialpostphone.imp.entity.Post
 import cat.insVidreres.socialpostphone.imp.entity.User
+import cat.insVidreres.socialpostphone.imp.profile.UserTypeAdapter
 import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -20,6 +24,8 @@ class Repository {
         var userToken: String = ""
         var usersList = mutableListOf<User>()
         lateinit var selectedUser: User
+        var userPostsList = mutableListOf<Post>()
+        var postsList = mutableListOf<Post>()
 
         fun loginUser(
             context: Context,
@@ -128,13 +134,21 @@ class Repository {
                     }
 
                     override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
-                        Log.i("marc", "bnuhgbt7ghgbfgvbgvhbg")
+                        Log.i("Sign In Http", "Error signing in | ${t.message}")
                         onFailure()
                     }
                 })
             }
         }
 
+//        fun getUserServiceWithCustomGson(): UserService {
+//            val gson = GsonBuilder()
+//                .registerTypeAdapter(User::class.java, UserTypeAdapter())
+//                .create()
+//
+//
+//            return retrofit.create(UserService::class.java)
+//        }
 
         fun getUserDetails(
             idToken: String,
@@ -161,11 +175,32 @@ class Repository {
                                 if (response.isSuccessful) {
                                     val jsonResponse = response.body()
                                     val userList = jsonResponse?.data
-                                    if (userList != null) {
-                                        selectedUser = userList[0] as User
-                                        println("Social  |  $jsonResponse")
-                                        onSuccess()
+
+                                    if (userList != null && userList.isNotEmpty()) {
+                                        val userJson = userList[0] as? Map<*, *>
+
+                                        if (userJson != null) {
+                                            val user = User(
+                                                id = userJson["id"] as? String,
+                                                email = userJson["email"] as String,
+                                                password = userJson["password"] as String,
+                                                firstName = userJson["firstName"] as? String,
+                                                lastName = userJson["lastName"] as? String,
+                                                age = (userJson["age"] as? Double)?.toInt(),
+                                                phoneNumber = userJson["phoneNumber"] as? String,
+                                                img = userJson["img"] as String
+                                            )
+
+                                            selectedUser = user
+                                            onSuccess()
+                                        } else {
+                                            onFailure("Error parsing user data")
+                                        }
+                                    } else {
+                                        onFailure("User list is empty or null")
                                     }
+                                } else {
+                                    onFailure("Response unsuccessful: ${response.code()}")
                                 }
                             }
 
@@ -181,14 +216,144 @@ class Repository {
             }
         }
 
-        fun loadPosts(
+        fun loadPostsWithCategory(
+            idToken: String,
             selectedItems: List<String>,
             onComplete: () -> Unit,
             onError: (error: String) -> Unit
         ) {
 
             GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
 
+                val postService = retrofit.create(PostService::class.java)
+
+                try {
+                    var finalString = ""
+
+                    selectedItems.forEach { item ->
+                        finalString += "$item,"
+                    }
+
+                    if (finalString != "") {
+                        postService.getPostsWithCategory(idToken, finalString)
+                            .enqueue(object : Callback<JsonResponse> {
+                                override fun onResponse(
+                                    call: Call<JsonResponse>,
+                                    response: Response<JsonResponse>
+                                ) {
+                                    if (response.isSuccessful) {
+                                        val jsonResponse = response.body()
+                                        val posts = jsonResponse?.data
+                                        if (posts != null) {
+                                            postsList = posts as MutableList<Post>
+                                            println("Social  |  $jsonResponse")
+                                            onComplete()
+                                        }
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                                    Log.d("userDetails error", "error: ${t.message.toString()}")
+                                    println("error: ${t.message.toString()}")
+                                    onError(t.message.toString())
+                                }
+                            })
+                    } else {
+                        println("ERROR GETTING CATEGORIES | concatenation ${finalString}")
+                        println("ERROR GETTING CATEGORIES | array ${selectedItems}")
+                    }
+
+                } catch (e: Exception) {
+                    println("Error | ${e.message}")
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        fun loadUserPosts(
+            idToken: String,
+            email: String,
+            onSuccess: () -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val postService = retrofit.create(PostService::class.java)
+
+                try {
+                    postService.getUserPosts(idToken, email)
+                        .enqueue(object: Callback<JsonResponse> {
+                            override fun onResponse(
+                                call: Call<JsonResponse>,
+                                response: Response<JsonResponse>
+                            ) {
+                                if (response.isSuccessful) {
+                                    val jsonResponse = response.body()
+                                    val postsFromServer = jsonResponse?.data
+
+                                    if (postsFromServer != null && postsFromServer.isNotEmpty()) {
+                                        var posts = postsFromServer as MutableList<Map<*, *>>
+                                        println("POSTS AS LIST OF MAPS | $posts")
+
+                                        if (posts != null) {
+                                            posts.forEach { item ->
+                                                println("item ${posts.indexOf(item)} | $item")
+                                                if (item["id"] == null) {
+                                                    (item as MutableMap<String, Any?>)["id"] = ""
+                                                }
+
+                                                val post = Post(
+                                                    item["id"] as String,
+                                                    item["email"] as String,
+                                                    item["createdAT"] as String,
+                                                    item["description"] as String,
+                                                    item["images"] as MutableList<String>,
+                                                    item["categories"] as MutableList<String>,
+                                                    item["likes"] as MutableList<String>,
+                                                    item["comments"] as MutableList<Comment>
+                                                )
+                                                userPostsList.add(post)
+                                                onSuccess()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                                Log.d("userPosts error", "error: ${t.message.toString()}")
+                                println("error: ${t.message.toString()}")
+                                onFailure(t.message.toString())
+                            }
+                        })
+                } catch (e: Exception) {
+                    println("Error | ${e.message}")
+                    e.printStackTrace()
+                    onFailure("Error | ${e.message}")
+                }
+            }
+        }
+
+
+        fun loadUserFriends(
+            idToken: String,
+            email: String,
+            onSuccess: () -> Unit,
+            onFailure: (error: String) -> Unit) {
+
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
             }
         }
     }

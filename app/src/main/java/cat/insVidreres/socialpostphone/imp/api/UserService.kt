@@ -23,4 +23,7 @@ interface UserService {
 
     @GET("user")
     fun getUserDetails(@Header("idToken") token: String, @Query("email") email: String): Call<JsonResponse>
+
+    @GET("user/friends")
+    fun getUserFriends(@Header("idToken") token: String, @Query("email") email: String): Call<JsonResponse>
 }

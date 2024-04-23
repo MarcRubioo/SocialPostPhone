@@ -11,10 +11,17 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Header
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface PostService {
-    @GET("posts")
+    @GET("allposts")
     fun getPosts(@Header("idToken") token: String): Call<JsonResponse>
+
+    @GET("posts")
+    fun getPostsWithCategory(@Header("idToken") token: String, @Header("Categories") categories: String): Call<JsonResponse>
+
+    @GET("userPosts")
+    fun getUserPosts(@Header("idToken") token: String, @Query("email") email: String): Call<JsonResponse>
 
     @POST("posts")
     fun uploadPost(@Header("idToken") token: String, @Body post: Post): Call<JsonResponse>

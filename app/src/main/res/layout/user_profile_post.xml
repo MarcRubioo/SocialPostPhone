@@ -23,7 +23,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/profileFragmentUserIV"
+                android:id="@+id/profilePostUserIV"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:scaleType="center"
@@ -43,7 +43,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:id="@+id/profilePostBodyTV"
+            android:id="@+id/profilePostBodyLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -55,7 +55,7 @@
             app:layout_constraintTop_toBottomOf="@+id/profilePostUserNameTV">
 
             <TextView
-                android:id="@+id/profileFollowerAmount"
+                android:id="@+id/profilePostBodyTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="I love the ocean, specially fishes!"
@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/profilePostBodyTV"
+            app:layout_constraintTop_toBottomOf="@id/profilePostBodyLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="17dp"
@@ -80,6 +80,17 @@
 
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/profilePostDateTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="15dp"
+            android:text="1AM"
+            android:textColor="@color/post_time_grey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
