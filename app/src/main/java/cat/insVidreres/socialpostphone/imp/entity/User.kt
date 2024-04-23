@@ -7,6 +7,7 @@ data class User (
     var lastName: String? = null,
     var age: Number? = null,
     var phoneNumber: String? = null,
-    var img: String
+    var img: String,
+    var friendsList: MutableList<User> = mutableListOf<User>()
 )
 

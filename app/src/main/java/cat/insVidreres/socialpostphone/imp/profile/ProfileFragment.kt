@@ -33,7 +33,7 @@ class ProfileFragment : Fragment() {
         val email = sharedPreferences.getString("email", "")
 
         val userPostRecycler = binding.profileUserPostsRecyclerView
-        userPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        userPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
         if (!idToken.isNullOrEmpty() && !email.isNullOrEmpty()) {
             var userReceived: User? = null;

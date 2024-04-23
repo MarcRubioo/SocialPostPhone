@@ -5,9 +5,7 @@ import android.util.Log
 import cat.insVidreres.socialpostphone.imp.entity.Comment
 import cat.insVidreres.socialpostphone.imp.entity.Post
 import cat.insVidreres.socialpostphone.imp.entity.User
-import cat.insVidreres.socialpostphone.imp.profile.UserTypeAdapter
 import com.google.firebase.auth.FirebaseAuth
-import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -16,7 +14,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 class Repository {
     companion object {
@@ -26,6 +23,7 @@ class Repository {
         lateinit var selectedUser: User
         var userPostsList = mutableListOf<Post>()
         var postsList = mutableListOf<Post>()
+        var friendsList = mutableListOf<User>()
 
         fun loginUser(
             context: Context,
@@ -180,6 +178,7 @@ class Repository {
                                         val userJson = userList[0] as? Map<*, *>
 
                                         if (userJson != null) {
+                                            println("check friends array | ${userJson}")
                                             val user = User(
                                                 id = userJson["id"] as? String,
                                                 email = userJson["email"] as String,
@@ -188,7 +187,8 @@ class Repository {
                                                 lastName = userJson["lastName"] as? String,
                                                 age = (userJson["age"] as? Double)?.toInt(),
                                                 phoneNumber = userJson["phoneNumber"] as? String,
-                                                img = userJson["img"] as String
+                                                img = userJson["img"] as String,
+                                                friendsList = userJson["friends"] as MutableList<User>
                                             )
 
                                             selectedUser = user
@@ -247,11 +247,32 @@ class Repository {
                                 ) {
                                     if (response.isSuccessful) {
                                         val jsonResponse = response.body()
-                                        val posts = jsonResponse?.data
-                                        if (posts != null) {
-                                            postsList = posts as MutableList<Post>
-                                            println("Social  |  $jsonResponse")
-                                            onComplete()
+                                        val postsFromServer = jsonResponse?.data
+                                        if (postsFromServer != null && postsFromServer.isNotEmpty()) {
+                                            var posts = postsFromServer as MutableList<Map<*, *>>
+                                            println("POSTS AS LIST OF MAPS | $posts")
+
+                                            if (posts != null) {
+                                                posts.forEach { item ->
+                                                    println("item ${posts.indexOf(item)} | $item")
+                                                    if (item["id"] == null) {
+                                                        (item as MutableMap<String, Any?>)["id"] = ""
+                                                    }
+
+                                                    val post = Post(
+                                                        item["id"] as String,
+                                                        item["email"] as String,
+                                                        item["createdAT"] as String,
+                                                        item["description"] as String,
+                                                        item["images"] as MutableList<String>,
+                                                        item["categories"] as MutableList<String>,
+                                                        item["likes"] as MutableList<String>,
+                                                        item["comments"] as MutableList<Comment>
+                                                    )
+                                                    userPostsList.add(post)
+                                                    onComplete()
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -304,6 +325,7 @@ class Repository {
                                         println("POSTS AS LIST OF MAPS | $posts")
 
                                         if (posts != null) {
+                                            userPostsList.clear()
                                             posts.forEach { item ->
                                                 println("item ${posts.indexOf(item)} | $item")
                                                 if (item["id"] == null) {
@@ -354,6 +376,58 @@ class Repository {
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
+
+                val userService = retrofit.create(UserService::class.java)
+
+                userService.getUserFriends(idToken, email)
+                    .enqueue(object : Callback<JsonResponse> {
+                        override fun onResponse(
+                            call: Call<JsonResponse>,
+                            response: Response<JsonResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val jsonResponse = response.body()
+                                val userFromServer = jsonResponse?.data
+
+                                if (userFromServer != null && userFromServer.isNotEmpty()) {
+                                    var user = userFromServer as MutableList<Map<*, *>>
+
+                                    if (user != null) {
+                                        user.forEach { user ->
+                                            val friendsArray = user["friends"] as MutableList<Map<*, *>>
+                                            println("friends array ? | $friendsArray")
+
+                                            if (friendsArray != null && friendsArray.isNotEmpty()) {
+                                                friendsList.clear()
+                                                println("user $user")
+                                                friendsArray.forEach { friend ->
+                                                    val finalFriend = User(
+                                                        id = friend["id"] as? String,
+                                                        email = friend["email"] as String,
+                                                        password = friend["password"] as String,
+                                                        firstName = friend["firstName"] as? String,
+                                                        lastName = friend["lastName"] as? String,
+                                                        age = (friend["age"] as? Double)?.toInt(),
+                                                        phoneNumber = friend["phoneNumber"] as? String,
+                                                        img = friend["img"] as String,
+                                                        friendsList = friend["friends"] as MutableList<User>
+                                                    )
+                                                    friendsList.add(finalFriend)
+                                                }
+                                                onSuccess()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                            println("Error | ${t.message}")
+                            t.printStackTrace()
+                            onFailure("Error | ${t.message}")
+                        }
+                    })
             }
         }
     }
