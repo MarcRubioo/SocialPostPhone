@@ -7,12 +7,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import cat.insVidreres.socialpostphone.imp.api.UserService
 import cat.insVidreres.socialpostphone.imp.databinding.ActivityLoginBinding
-import cat.insVidreres.socialpostphone.imp.mainActivity.MainActivity
+import cat.insVidreres.socialpostphone.imp.mainActivity.UsersMainActivity
 import cat.insVidreres.socialpostphone.imp.register.RegisterActivity
-import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -62,7 +59,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun goMain() {
-        val intentToMain = Intent(this, MainActivity::class.java)
+        val intentToMain = Intent(this, UsersMainActivity::class.java)
         startActivity(intentToMain)
     }
 

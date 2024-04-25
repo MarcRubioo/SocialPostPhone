@@ -151,10 +151,9 @@ class Repository {
         fun getUserDetails(
             idToken: String,
             email: String,
-            onSuccess: () -> Unit,
+            onSuccess: (User) -> Unit,
             onFailure: (error: String) -> Unit
         ) {
-
             GlobalScope.launch(Dispatchers.IO) {
                 val retrofit = Retrofit.Builder()
                     .baseUrl(BASE_URL)
@@ -192,7 +191,7 @@ class Repository {
                                             )
 
                                             selectedUser = user
-                                            onSuccess()
+                                            onSuccess(user)
                                         } else {
                                             onFailure("Error parsing user data")
                                         }
@@ -212,6 +211,72 @@ class Repository {
                         })
                 } catch (e: Exception) {
                     println("Error  |  ${e.message}")
+                }
+            }
+        }
+
+        fun loadPosts(
+            idToken: String,
+            onComplete: () -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val postService = retrofit.create(PostService::class.java)
+
+                try {
+                    postService.getPosts(idToken)
+                        .enqueue(object : Callback<JsonResponse> {
+                            override fun onResponse(
+                                call: Call<JsonResponse>,
+                                response: Response<JsonResponse>
+                            ) {
+                                if (response.isSuccessful) {
+                                    postsList.clear()
+                                    val jsonResponse = response.body()
+                                    val postsFromServer = jsonResponse?.data
+
+                                    if (postsFromServer != null && postsFromServer.isNotEmpty()) {
+                                        var posts = postsFromServer as MutableList<Map<*, *>>
+                                        println("POSTS AS LIST OF MAPS | $posts")
+
+                                        if (posts != null) {
+                                            posts.forEach { post ->
+                                                val finalPost = Post(
+                                                    post["id"] as String,
+                                                    post["email"] as String,
+                                                    post["createdAT"] as String,
+                                                    post["description"] as String,
+                                                    post["images"] as MutableList<String>,
+                                                    post["categories"] as MutableList<String>,
+                                                    post["likes"] as MutableList<String>,
+                                                    post["comments"] as MutableList<Comment>
+                                                )
+
+                                                postsList.add(finalPost)
+                                            }
+                                            println("final post list | ${postsList}")
+                                            onComplete()
+                                        }
+                                    }
+                                }
+                            }
+
+                            override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                                println("Error | ${t.message}")
+                                onFailure("Error | ${t.message}")
+                                t.printStackTrace()
+                            }
+                        })
+                } catch (e: Exception) {
+                    println("Error | ${e.message}")
+                    onFailure("Error | ${e.message}")
+                    e.printStackTrace()
                 }
             }
         }
@@ -290,6 +355,7 @@ class Repository {
 
                 } catch (e: Exception) {
                     println("Error | ${e.message}")
+                    onError("Error | ${e.message}")
                     e.printStackTrace()
                 }
             }
@@ -429,6 +495,20 @@ class Repository {
                         }
                     })
             }
+        }
+
+
+        fun createPost(
+            idToken: String,
+            post: Post,
+            onSuccess: () -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+
+            GlobalScope.launch(Dispatchers.IO) {
+
+            }
+
         }
     }
 }

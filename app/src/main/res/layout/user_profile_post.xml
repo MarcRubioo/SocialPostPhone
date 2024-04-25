@@ -3,94 +3,122 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/profileUsersTopContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="30dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/profileUserImageLayout"
-            android:layout_width="wrap_content"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/profileUsersTopContainer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="90dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/profilePostUserIV"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:scaleType="center"
-                android:src="@drawable/ic_launcher_foreground" />
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/profilePostUserNameTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="13dp"
-            android:text="nuvdhvnis"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/profileUserImageLayout"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/profilePostBodyLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/profileUserImageLayout"
-            app:layout_constraintTop_toBottomOf="@+id/profilePostUserNameTV">
-
-            <TextView
-                android:id="@+id/profilePostBodyTV"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/profileUserImageLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="I love the ocean, specially fishes!"
-                android:textSize="16sp"
-                android:textStyle="normal"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="90dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/profilePostUserIV"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_launcher_foreground" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/profilePostUserNameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="13dp"
+                android:text="default name"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/profileUserImageLayout"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/profilePostBodyLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/profileUserImageLayout"
-                app:layout_constraintTop_toBottomOf="@+id/profilePostUserNameTV" />
-        </LinearLayout>
+                app:layout_constraintTop_toBottomOf="@+id/profilePostUserNameTV">
 
-        <LinearLayout
-            android:id="@+id/imageContainer"
+                <TextView
+                    android:id="@+id/profilePostBodyTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="default body"
+                    android:textSize="16sp"
+                    android:textStyle="normal"
+                    app:layout_constraintStart_toEndOf="@+id/profileUserImageLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/profilePostUserNameTV" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/imageContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/profilePostBodyLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="17dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="center_vertical">
+
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/profilePostDateTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="15dp"
+                android:text="1AM"
+                android:textColor="@color/post_time_grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/profilePostBodyLayout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="17dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:gravity="center_vertical">
+            android:layout_height="2dp"
+            android:layout_centerVertical="true"
+            android:background="#FF776C6C"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="2dp"
+            />
 
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/profilePostDateTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:layout_marginEnd="15dp"
-            android:text="1AM"
-            android:textColor="@color/post_time_grey"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+        <View
+            android:id="@+id/bottomLinePost"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_centerVertical="true"
+            android:background="#FF776C6C"
+            tools:layout_editor_absoluteX="2dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/profileUsersTopContainer"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>
