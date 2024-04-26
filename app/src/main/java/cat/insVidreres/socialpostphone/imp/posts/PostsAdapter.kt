@@ -9,10 +9,14 @@ import cat.insVidreres.socialpostphone.imp.databinding.UserProfilePostBinding
 import cat.insVidreres.socialpostphone.imp.entity.Post
 import cat.insVidreres.socialpostphone.imp.entity.User
 import com.bumptech.glide.Glide
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class PostsAdapter(
     val context: Context,
-    var dataset: MutableList<Post>,
+    var dataset: List<Post>,
     var user: User
 ) :
     RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
@@ -23,7 +27,7 @@ class PostsAdapter(
                 binding.profilePostUserNameTV.text = user.firstName
                 Glide.with(binding.profilePostUserIV.context).load(user.img).into(binding.profilePostUserIV)
                 binding.profilePostBodyTV.text = post.description
-                binding.profilePostDateTV.text = post.createdAT
+                binding.profilePostDateTV.text = formatDate(post.createdAT)
             }
     }
 
@@ -40,4 +44,24 @@ class PostsAdapter(
         val post = dataset[position]
         holder.bind(post)
     }
+
+    private fun formatDate(timestamp: String): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val date = sdf.parse(timestamp)
+        val now = Calendar.getInstance().time
+        val diff = now.time - date.time
+
+        val seconds = diff / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+
+        return when {
+            days > 0 -> "${days}d"
+            hours > 0 -> "${hours}h"
+            minutes > 0 -> "${minutes}m"
+            else -> "${seconds}s"
+        }
+    }
+
 }

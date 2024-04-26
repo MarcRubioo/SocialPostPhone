@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.databinding.FragmentHomeBinding
@@ -76,7 +77,7 @@ class HomeFragment : Fragment() {
 
         val adapter = HomePostAdapter(requireContext(), sortedPostsList, idToken) { selectedPost ->
             usersSharedViewModel.sendPost(selectedPost)
-
+            findNavController().navigate(R.id.detailsFragment)
         }
         binding.homePostsRV.adapter = adapter
     }

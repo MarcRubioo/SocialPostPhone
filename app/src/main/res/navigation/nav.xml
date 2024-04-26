@@ -30,4 +30,9 @@
         android:name="cat.insVidreres.socialpostphone.imp.profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="cat.insVidreres.socialpostphone.imp.details.DetailsFragment"
+        android:label="DetailsFragment"
+        tools:layout="@layout/fragment_details"/>
 </navigation>

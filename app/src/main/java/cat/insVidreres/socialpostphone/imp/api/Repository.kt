@@ -14,6 +14,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Objects
 
 class Repository {
     companion object {
@@ -177,7 +178,6 @@ class Repository {
                                         val userJson = userList[0] as? Map<*, *>
 
                                         if (userJson != null) {
-                                            println("check friends array | ${userJson}")
                                             val user = User(
                                                 id = userJson["id"] as? String,
                                                 email = userJson["email"] as String,
@@ -246,7 +246,26 @@ class Repository {
                                         println("POSTS AS LIST OF MAPS | $posts")
 
                                         if (posts != null) {
+
+
                                             posts.forEach { post ->
+                                                val finalComments = mutableListOf<Comment>()
+                                                try {
+                                                    val comments = post["comments"] as? List<Map<String, Any>> // Assuming comments is a list of maps
+                                                    comments?.forEach { commentMap ->
+                                                        val email = commentMap["email"] as? String ?: ""
+                                                        val desc = commentMap["comment"] as? String ?: ""
+                                                        val commentAT = commentMap["commentAt"] as? String ?: ""
+                                                        val likes = commentMap["likes"] as? MutableList<String> ?: mutableListOf()
+
+                                                        val comment = Comment(email, desc, commentAT, likes)
+                                                        finalComments.add(comment)
+                                                    }
+                                                } catch (e: Exception) {
+                                                    println("error parsing the comments | ${e.message}")
+                                                }
+
+
                                                 val finalPost = Post(
                                                     post["id"] as String,
                                                     post["email"] as String,
@@ -255,7 +274,7 @@ class Repository {
                                                     post["images"] as MutableList<String>,
                                                     post["categories"] as MutableList<String>,
                                                     post["likes"] as MutableList<String>,
-                                                    post["comments"] as MutableList<Comment>
+                                                    finalComments
                                                 )
 
                                                 postsList.add(finalPost)
@@ -319,6 +338,22 @@ class Repository {
 
                                             if (posts != null) {
                                                 posts.forEach { item ->
+                                                    val finalComments = mutableListOf<Comment>()
+                                                    try {
+                                                        val comments = item["comments"] as? List<Map<String, Any>> // Assuming comments is a list of maps
+                                                        comments?.forEach { commentMap ->
+                                                            val email = commentMap["email"] as? String ?: ""
+                                                            val desc = commentMap["comment"] as? String ?: ""
+                                                            val commentAT = commentMap["commentAt"] as? String ?: ""
+                                                            val likes = commentMap["likes"] as? MutableList<String> ?: mutableListOf()
+
+                                                            val comment = Comment(email, desc, commentAT, likes)
+                                                            finalComments.add(comment)
+                                                        }
+                                                    } catch (e: Exception) {
+                                                        println("error parsing the comments | ${e.message}")
+                                                    }
+
                                                     println("item ${posts.indexOf(item)} | $item")
                                                     if (item["id"] == null) {
                                                         (item as MutableMap<String, Any?>)["id"] = ""
@@ -332,7 +367,7 @@ class Repository {
                                                         item["images"] as MutableList<String>,
                                                         item["categories"] as MutableList<String>,
                                                         item["likes"] as MutableList<String>,
-                                                        item["comments"] as MutableList<Comment>
+                                                        finalComments
                                                     )
                                                     userPostsList.add(post)
                                                     onComplete()
@@ -388,12 +423,27 @@ class Repository {
 
                                     if (postsFromServer != null && postsFromServer.isNotEmpty()) {
                                         var posts = postsFromServer as MutableList<Map<*, *>>
-                                        println("POSTS AS LIST OF MAPS | $posts")
 
                                         if (posts != null) {
                                             userPostsList.clear()
                                             posts.forEach { item ->
-                                                println("item ${posts.indexOf(item)} | $item")
+
+                                                val finalComments = mutableListOf<Comment>()
+                                                try {
+                                                    val comments = item["comments"] as? List<Map<String, Any>> // Assuming comments is a list of maps
+                                                    comments?.forEach { commentMap ->
+                                                        val email = commentMap["email"] as? String ?: ""
+                                                        val desc = commentMap["comment"] as? String ?: ""
+                                                        val commentAT = commentMap["commentAt"] as? String ?: ""
+                                                        val likes = commentMap["likes"] as? MutableList<String> ?: mutableListOf()
+
+                                                        val comment = Comment(email, desc, commentAT, likes)
+                                                        finalComments.add(comment)
+                                                    }
+                                                } catch (e: Exception) {
+                                                    println("error parsing the comments | ${e.message}")
+                                                }
+
                                                 if (item["id"] == null) {
                                                     (item as MutableMap<String, Any?>)["id"] = ""
                                                 }
@@ -406,7 +456,7 @@ class Repository {
                                                     item["images"] as MutableList<String>,
                                                     item["categories"] as MutableList<String>,
                                                     item["likes"] as MutableList<String>,
-                                                    item["comments"] as MutableList<Comment>
+                                                    finalComments
                                                 )
                                                 userPostsList.add(post)
                                                 onSuccess()

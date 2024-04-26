@@ -6,31 +6,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="Home"
-        android:icon="@drawable/home"/>
+        android:icon="@drawable/home"
+        />
 
     <item
         android:id="@+id/searchFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Buscar" />
-<!--        android:icon="@drawable/iconoadd"-->
+        android:title="Buscar"
+        android:icon="@drawable/search"
+        />
 
     <item
         android:id="@+id/addPostFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Añadir" />
+        android:title="Añadir"
+        android:icon="@drawable/add_post"
+        />
 
     <item
         android:id="@+id/friendsFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Amigos" />
+        android:title="Amigos"
+        android:icon="@drawable/friends"
+        />
 
     <item
         android:id="@+id/profileFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Perfil" />
-<!--        android:icon="@drawable/iconoperfil"-->
+        android:title="Perfil"
+        android:icon="@drawable/profile"
+        />
 </menu>

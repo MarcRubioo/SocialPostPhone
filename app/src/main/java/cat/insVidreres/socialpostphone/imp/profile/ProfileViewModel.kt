@@ -37,7 +37,6 @@ class ProfileViewModel : ViewModel() {
             Repository.loadUserPosts(idToken, email,
                 onSuccess = {
                     _userPosts.value = Repository.userPostsList
-                    println("UsersPostList | ${Repository.userPostsList}")
                     println("getting users posts WORKS")
                 },
                 onFailure = { error ->

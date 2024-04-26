@@ -14,6 +14,9 @@ import cat.insVidreres.socialpostphone.imp.databinding.FragmentProfileBinding
 import cat.insVidreres.socialpostphone.imp.entity.User
 import cat.insVidreres.socialpostphone.imp.posts.PostsAdapter
 import com.bumptech.glide.Glide
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class ProfileFragment : Fragment() {
@@ -38,6 +41,8 @@ class ProfileFragment : Fragment() {
         if (!idToken.isNullOrEmpty() && !email.isNullOrEmpty()) {
             var userReceived: User? = null;
             viewModel.loadUser(idToken, email)
+            viewModel.loadUserPosts(idToken, email)
+
 
             viewModel.user.observe(viewLifecycleOwner) { user ->
                 binding.profileUserNameTV.text = user.firstName
@@ -49,16 +54,21 @@ class ProfileFragment : Fragment() {
 
             }
 
-            viewModel.loadUserPosts(idToken, email)
 
             viewModel.userPost.observe(viewLifecycleOwner) { postsList ->
-                println("user received from userPost observer? | ${userReceived}")
-                var adapter = userReceived?.let { PostsAdapter(requireContext(), postsList, it) }
+                val sortedPostsList = postsList.sortedByDescending { parseDate(it.createdAT) }
+                println("user received from userPost observer? | ${sortedPostsList}")
+                var adapter = userReceived?.let { PostsAdapter(requireContext(), sortedPostsList, it) }
                 userPostRecycler.adapter = adapter
             }
         }
 
         return binding.root
+    }
+
+    private fun parseDate(createdAT: String): Date {
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        return sdf.parse(createdAT)
     }
 
 }

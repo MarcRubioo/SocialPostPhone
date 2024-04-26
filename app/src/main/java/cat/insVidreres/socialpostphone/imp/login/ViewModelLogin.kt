@@ -21,7 +21,6 @@ class ViewModelLogin: ViewModel() {
     fun loginUser(context: Context, email: String, password: String) {
         Repository.loginUser(context, email, password, { success ->
             _loginSuccess.postValue(success)
-            _errorMessage.postValue("Inicio correcto")
         }, {
             _errorMessage.postValue("Error al iniciar sesiónnn")
         })
