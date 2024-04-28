@@ -7,16 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.databinding.FragmentFriendsBinding
+import cat.insVidreres.socialpostphone.imp.mainActivity.UsersSharedViewModel
 
 
 class FriendsFragment : Fragment() {
 
     private lateinit var binding: FragmentFriendsBinding
     private val viewModel: FriendsViewModel by viewModels()
+    private val usersSharedViewModel: UsersSharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +44,10 @@ class FriendsFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
 
-            //TODO navigate to friend profile fragment with the data in a sharedViewModel
+            usersSharedViewModel.sendUser(selectedUser)
+            println("friend selected | $selectedUser")
+            findNavController().navigate(R.id.friendsProfileFragment)
+
         }
 
         if (!idToken.isNullOrEmpty() && !email.isNullOrEmpty()) {
