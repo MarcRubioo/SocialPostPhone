@@ -25,6 +25,7 @@ class Repository {
         var userPostsList = mutableListOf<Post>()
         var postsList = mutableListOf<Post>()
         var friendsList = mutableListOf<User>()
+        var categoriesList = mutableListOf<String>()
 
         fun loginUser(
             context: Context,
@@ -300,6 +301,7 @@ class Repository {
             }
         }
 
+
         fun loadPostsWithCategory(
             idToken: String,
             selectedItems: List<String>,
@@ -330,6 +332,7 @@ class Repository {
                                     response: Response<JsonResponse>
                                 ) {
                                     if (response.isSuccessful) {
+                                        postsList.clear()
                                         val jsonResponse = response.body()
                                         val postsFromServer = jsonResponse?.data
                                         if (postsFromServer != null && postsFromServer.isNotEmpty()) {
@@ -369,10 +372,14 @@ class Repository {
                                                         item["likes"] as MutableList<String>,
                                                         finalComments
                                                     )
-                                                    userPostsList.add(post)
-                                                    onComplete()
+                                                    postsList.add(post)
                                                 }
+                                                onComplete()
                                             }
+                                        } else {
+                                            postsList.clear()
+                                            println("No posts for ${selectedItems}")
+                                            onComplete()
                                         }
                                     }
                                 }
@@ -395,6 +402,7 @@ class Repository {
                 }
             }
         }
+
 
         fun loadUserPosts(
             idToken: String,
@@ -559,6 +567,55 @@ class Repository {
 
             }
 
+        }
+
+        fun getCategories(
+            idToken: String,
+            onSuccess: () -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val userService = retrofit.create(CategoriesService::class.java)
+
+                userService.getCategories(idToken)
+                    .enqueue(object : Callback<JsonResponse> {
+                        override fun onResponse(
+                            call: Call<JsonResponse>,
+                            response: Response<JsonResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                categoriesList.clear()
+                                val jsonResponse = response.body()
+                                val categoriesFromServer = jsonResponse?.data
+
+                                if (categoriesFromServer != null && categoriesFromServer.isNotEmpty()) {
+                                    var dataToShow = categoriesFromServer as MutableList<String>
+                                    if (dataToShow != null) {
+                                        println("dataToShow | $dataToShow")
+                                        var categories = dataToShow as List<String>
+                                        println("categories parsed correctly? | $categories")
+                                        categories.forEach { category ->
+                                            categoriesList.add(category)
+                                        }
+
+                                        onSuccess()
+                                    }
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                            println("call was not successfull | ${t.message}")
+                            onFailure("Error calling categories | ${t.message}")
+                        }
+                    })
+            }
         }
     }
 }

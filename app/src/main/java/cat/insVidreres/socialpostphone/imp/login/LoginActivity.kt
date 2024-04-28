@@ -31,16 +31,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        viewModel.loginSuccess.observe(this, Observer { success ->
+        viewModel.loginSuccess.observe(this) { success ->
             if (success) {
                 Toast.makeText(this, "Inicio de sesión correcto!", Toast.LENGTH_SHORT).show()
                 goMain()
             }
-        })
+        }
 
-        viewModel.errorMessage.observe(this, Observer { errorMessage ->
+        viewModel.errorMessage.observe(this) { errorMessage ->
             Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
-        })
+        }
     }
 
     private fun setup() {
