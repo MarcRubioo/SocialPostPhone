@@ -40,7 +40,7 @@ class FriendsFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
 
-            //TODO navigate to profile fragment with the data in a sharedViewModel
+            //TODO navigate to friend profile fragment with the data in a sharedViewModel
         }
 
         if (!idToken.isNullOrEmpty() && !email.isNullOrEmpty()) {

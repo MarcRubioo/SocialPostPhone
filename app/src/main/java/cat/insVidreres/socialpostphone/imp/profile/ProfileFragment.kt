@@ -1,11 +1,14 @@
 package cat.insVidreres.socialpostphone.imp.profile
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
@@ -23,6 +26,13 @@ class ProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
+
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var email: String
+    private lateinit var idToken: String
+
+    private var imageUri: Uri? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,10 +40,10 @@ class ProfileFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(inflater)
 
-        val sharedPreferences =
+        sharedPreferences =
             requireContext().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
-        val idToken = sharedPreferences.getString("idToken", "")
-        val email = sharedPreferences.getString("email", "")
+        idToken = sharedPreferences.getString("idToken", "").toString()
+        email = sharedPreferences.getString("email", "").toString()
 
         val userPostRecycler = binding.profileUserPostsRecyclerView
         userPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -51,9 +61,11 @@ class ProfileFragment : Fragment() {
 //                binding.profileFollowerAmount.text = user.followers.size.toString()
 //                binding.profileFollowingAmount.text = user.following.size.toString()
                 userReceived = user
-
             }
 
+            viewModel.userImg.observe(viewLifecycleOwner) { url ->
+                Glide.with(binding.profileFragmentUserIV.context).load(url).into(binding.profileFragmentUserIV)
+            }
 
             viewModel.userPost.observe(viewLifecycleOwner) { postsList ->
                 val sortedPostsList = postsList.sortedByDescending { parseDate(it.createdAT) }
@@ -61,10 +73,36 @@ class ProfileFragment : Fragment() {
                 var adapter = userReceived?.let { PostsAdapter(requireContext(), sortedPostsList, it) }
                 userPostRecycler.adapter = adapter
             }
+
+            binding.profileFragmentUserIV.setOnClickListener {
+                resultLauncher.launch("image/*")
+            }
         }
 
         return binding.root
     }
+
+    private val resultLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()){ uri ->
+
+        idToken = sharedPreferences.getString("idToken", "").toString()
+        email = sharedPreferences.getString("email", "").toString()
+
+        imageUri = uri
+        binding.profileFragmentUserIV.setImageURI(uri)
+
+        if (idToken.isNotEmpty() && email.isNotEmpty()) {
+            val inputStream = uri?.let { requireContext().contentResolver.openInputStream(it) }
+            val imageData = inputStream?.readBytes()
+
+            if (imageData != null) {
+                viewModel.updateUserPFP(idToken, email, imageData)
+            } else {
+                println("imageData was null! |");
+            }
+        }
+    }
+
 
     private fun parseDate(createdAT: String): Date {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())

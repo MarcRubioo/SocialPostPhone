@@ -1,10 +1,12 @@
 package cat.insVidreres.socialpostphone.imp.api
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import cat.insVidreres.socialpostphone.imp.entity.Comment
 import cat.insVidreres.socialpostphone.imp.entity.Post
 import cat.insVidreres.socialpostphone.imp.entity.User
+import cat.insVidreres.socialpostphone.imp.profile.UpdatePFPRequest
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -26,6 +28,8 @@ class Repository {
         var postsList = mutableListOf<Post>()
         var friendsList = mutableListOf<User>()
         var categoriesList = mutableListOf<String>()
+        lateinit var serverResponse: JsonResponse
+        var userImage : String = ""
 
         fun loginUser(
             context: Context,
@@ -297,6 +301,56 @@ class Repository {
                     println("Error | ${e.message}")
                     onFailure("Error | ${e.message}")
                     e.printStackTrace()
+                }
+            }
+        }
+
+
+        fun updateUserProfilePicture(
+            idToken: String,
+            email: String,
+            imgData: ByteArray?,
+            onComplete: () -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val userService = retrofit.create(UserService::class.java)
+
+                imgData?.let { data ->
+
+                    val request = UpdatePFPRequest(
+                        email,
+                        data
+                    )
+                    userService.updateUserPFP(idToken, request)
+                        .enqueue(object : Callback<JsonResponse>{
+                            override fun onResponse(
+                                call: Call<JsonResponse>,
+                                response: Response<JsonResponse>
+                            ) {
+                                if (response.isSuccessful) {
+                                    val jsonResponse = response.body()
+                                    if (jsonResponse != null) {
+                                        userImage = jsonResponse.data[0] as String
+                                        onComplete()
+                                    }
+                                } else {
+                                    println("An error has occurred | ${response.code()} | ${response.errorBody()}")
+                                    onFailure("An error has occurred | ${response.code()} | ${response.errorBody()}")
+                                }
+                            }
+
+                            override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                                Log.d("pfp update error", "error: ${t.message.toString()}")
+                                println("error: ${t.message.toString()}")
+                                onFailure(t.message.toString())
+                            }
+                        })
                 }
             }
         }

@@ -1,5 +1,6 @@
 package cat.insVidreres.socialpostphone.imp.profile
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,6 +18,8 @@ class ProfileViewModel : ViewModel() {
     private var _userPosts = MutableLiveData<MutableList<Post>>()
     val userPost : LiveData<MutableList<Post>> = _userPosts
 
+    private var _userImg = MutableLiveData<String>()
+    val userImg : LiveData<String> = _userImg
 
     fun loadUser(idToken: String, email: String) {
         viewModelScope.launch {
@@ -41,6 +44,18 @@ class ProfileViewModel : ViewModel() {
                 },
                 onFailure = { error ->
                     println("Error getting users posts | $error")
+                })
+        }
+    }
+
+    fun updateUserPFP(idToken: String, email: String, imgData: ByteArray?) {
+        viewModelScope.launch {
+            Repository.updateUserProfilePicture(idToken, email, imgData,
+                onComplete = {
+                    println("image updated!")
+                    _userImg.value = Repository.userImage
+                }, onFailure = { error ->
+                    println("error updating the pfp | $error")
                 })
         }
     }
