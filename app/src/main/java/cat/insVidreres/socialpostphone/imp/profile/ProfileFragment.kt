@@ -75,10 +75,23 @@ class ProfileFragment : Fragment() {
                 val sortedPostsList = postsList.sortedByDescending { parseDate(it.createdAT) }
                 println("user received from userPost observer? | ${sortedPostsList}")
                 var adapter = userReceived?.let { user ->
-                    PostsAdapter(requireContext(), sortedPostsList, user) { selectedPost ->
-                        usersSharedViewModel.sendPost(selectedPost)
-                        findNavController().navigate(R.id.detailsFragment)
-                    }
+                    PostsAdapter(requireContext(), sortedPostsList, user,
+                        itemOnClickListener = { selectedPost ->
+                            usersSharedViewModel.sendPost(selectedPost)
+                            findNavController().navigate(R.id.detailsFragment)
+
+                        },
+                        likeItemClickListener = { postClicked, likedAlready ->
+                            println("post clicked | ${postClicked.id}")
+
+                            if (likedAlready) {
+                                println("Already liked? insert | $likedAlready")
+                                viewModel.deletePostLike(idToken, email, postClicked)
+                            } else {
+                                println("Already liked? delete  | $likedAlready")
+                                viewModel.insertPostLike(idToken, email, postClicked)
+                            }
+                        })
                 }
                 userPostRecycler.adapter = adapter
             }

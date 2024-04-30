@@ -145,14 +145,6 @@ class Repository {
             }
         }
 
-//        fun getUserServiceWithCustomGson(): UserService {
-//            val gson = GsonBuilder()
-//                .registerTypeAdapter(User::class.java, UserTypeAdapter())
-//                .create()
-//
-//
-//            return retrofit.create(UserService::class.java)
-//        }
 
         fun getUserDetails(
             idToken: String,
@@ -351,6 +343,105 @@ class Repository {
                                 onFailure(t.message.toString())
                             }
                         })
+                }
+            }
+        }
+
+
+        fun insertLikeToPost(
+            idToken: String,
+            post: Post,
+            email: String,
+            onComplete: () -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val postService = retrofit.create(PostService::class.java)
+
+                try {
+                    postService.likePost(idToken, post.id, email)
+                        .enqueue(object : Callback<JsonResponse> {
+                            override fun onResponse(
+                                call: Call<JsonResponse>,
+                                response: Response<JsonResponse>
+                            ) {
+                                if (response.isSuccessful) {
+                                    val jsonResponse = response.body()
+                                    if (jsonResponse != null) {
+                                        println("response from server | $jsonResponse")
+                                        onComplete()
+                                    }
+                                } else {
+                                    println("An error has occurred | ${response.code()} | ${response.errorBody()}")
+                                    onFailure("An error has occurred | ${response.code()} | ${response.errorBody()}")
+                                }
+                            }
+
+                            override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                                Log.d("like insert error", "error: ${t.message.toString()}")
+                                println("error: ${t.message.toString()}")
+                                onFailure(t.message.toString())
+                            }
+                        })
+                } catch (e: Exception) {
+                    println("error: ${e.message.toString()}")
+                    onFailure(e.message.toString())
+                    e.printStackTrace()
+                }
+            }
+        }
+
+
+        fun deleteLikeToPost(
+            idToken: String,
+            post: Post,
+            email: String,
+            onComplete: () -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val postService = retrofit.create(PostService::class.java)
+
+                try {
+                    postService.deleteLikePost(idToken, post.id, email)
+                        .enqueue(object : Callback<JsonResponse> {
+                            override fun onResponse(
+                                call: Call<JsonResponse>,
+                                response: Response<JsonResponse>
+                            ) {
+                                if (response.isSuccessful) {
+                                    val jsonResponse = response.body()
+                                    if (jsonResponse != null) {
+                                        println("response from server | $jsonResponse")
+
+                                        onComplete()
+                                    }
+                                } else {
+                                    println("An error has occurred | ${response.code()} | ${response.errorBody()}")
+                                    onFailure("An error has occurred | ${response.code()} | ${response.errorBody()}")
+                                }
+                            }
+
+                            override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                                Log.d("like deletion error", "error: ${t.message.toString()}")
+                                println("error: ${t.message.toString()}")
+                                onFailure(t.message.toString())
+                            }
+                        })
+                } catch (e: Exception) {
+                    println("error: ${e.message.toString()}")
+                    onFailure(e.message.toString())
+                    e.printStackTrace()
                 }
             }
         }
@@ -623,6 +714,7 @@ class Repository {
 
         }
 
+
         fun getCategories(
             idToken: String,
             onSuccess: () -> Unit,
@@ -670,6 +762,41 @@ class Repository {
                         }
                     })
             }
+        }
+
+        fun insertLikeToComment(
+            idToken: String,
+            post: Post,
+            email: String,
+            comment: Comment,
+            onComplete: () -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val postService = retrofit.create(PostService::class.java)
+            }
+        }
+
+        fun deleteLikeToComment(
+            idToken: String,
+            post: Post,
+            email: String,
+            comment: Comment,
+            onComplete: () -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+            val retrofit = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            val postService = retrofit.create(PostService::class.java)
         }
     }
 }

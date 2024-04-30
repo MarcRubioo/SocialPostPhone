@@ -1,6 +1,7 @@
 package cat.insVidreres.socialpostphone.imp.friends.profile
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -26,6 +27,9 @@ class FriendsProfileFragment : Fragment() {
     private lateinit var binding: FragmentFriendsProfileBinding
     private val viewModel: FriendsProfileViewModel by viewModels()
     private val usersSharedViewModel: UsersSharedViewModel by activityViewModels()
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var email: String
+    private lateinit var idToken: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,10 +47,10 @@ class FriendsProfileFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        val sharedPreferences =
+        sharedPreferences =
             requireContext().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
-        val idToken = sharedPreferences.getString("idToken", "")
-        val email = sharedPreferences.getString("email", "")
+        idToken = sharedPreferences.getString("idToken", "").toString()
+        email = sharedPreferences.getString("email", "").toString()
 
         val friendPostRecycler = binding.profileFriendPostsRecyclerView
         friendPostRecycler.layoutManager =
@@ -73,10 +77,22 @@ class FriendsProfileFragment : Fragment() {
             val sortedPostsList = postsList.sortedByDescending { parseDate(it.createdAT) }
             println("user received from userPost observer? | ${sortedPostsList}")
             var adapter = userReceived?.let { user ->
-                PostsAdapter(requireContext(), sortedPostsList, user) { selectedPost ->
-                    usersSharedViewModel.sendPost(selectedPost)
-                    findNavController().navigate(R.id.detailsFragment)
-                }
+                PostsAdapter(requireContext(), sortedPostsList, user,
+                    itemOnClickListener = { selectedPost ->
+                        usersSharedViewModel.sendPost(selectedPost)
+                        findNavController().navigate(R.id.detailsFragment)
+
+                    },
+                    likeItemClickListener = { postClicked, likedAlready ->
+                        if (likedAlready) {
+                            println("Already liked? insert | $likedAlready")
+                            viewModel.deletePostLike(idToken, email, postClicked)
+                        } else {
+                            println("Already liked? delete  | $likedAlready")
+                            viewModel.insertPostLike(idToken, email, postClicked)
+                        }
+                    })
+
             }
             friendPostRecycler.adapter = adapter
         }

@@ -31,4 +31,54 @@ class DetailsViewModel : ViewModel() {
                 })
         }
     }
+
+    fun insertPostLike(idToken: String, email: String, post: Post) {
+        viewModelScope.launch {
+            Repository.insertLikeToPost(idToken, post, email,
+                onComplete = {
+                    println("inserted like :)")
+                },
+                onFailure = { error ->
+                    println("error inserting like into post | $error")
+                })
+        }
+    }
+
+
+    fun deletePostLike(idToken: String, email: String, post: Post) {
+        viewModelScope.launch {
+            Repository.deleteLikeToPost(idToken, post, email,
+                onComplete = {
+                    println("deleted like :-)")
+                },
+                onFailure = { error ->
+                    println("error deleting like into post | $error")
+                })
+        }
+    }
+
+    fun insertCommentLike(idToken: String, email: String, post: Post, comment: Comment) {
+        viewModelScope.launch {
+            Repository.insertLikeToComment(idToken, post, email, comment,
+                onComplete = {
+                    println("inserted like :)")
+                },
+                onFailure = { error ->
+                    println("error inserting like into post | $error")
+                })
+        }
+    }
+
+
+    fun deleteCommentLike(idToken: String, email: String, post: Post, comment: Comment) {
+        viewModelScope.launch {
+            Repository.deleteLikeToComment(idToken, post, email, comment,
+                onComplete = {
+                    println("deleted like :-)")
+                },
+                onFailure = { error ->
+                    println("error deleting like into post | $error")
+                })
+        }
+    }
 }

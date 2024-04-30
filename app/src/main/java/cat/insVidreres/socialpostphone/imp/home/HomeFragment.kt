@@ -1,6 +1,7 @@
 package cat.insVidreres.socialpostphone.imp.home
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
@@ -30,6 +31,9 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
     private val usersSharedViewModel: UsersSharedViewModel by activityViewModels()
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var email: String
+    private lateinit var idToken: String
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,21 +41,35 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater)
 
         binding.homeNoUserPostsWarningTV.visibility = View.GONE
-        val sharedPreferences =
+        sharedPreferences =
             requireContext().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
-        val idToken = sharedPreferences.getString("idToken", "")
-        val email = sharedPreferences.getString("email", "")
+        idToken = sharedPreferences.getString("idToken", "").toString()
+        email = sharedPreferences.getString("email", "").toString()
 
         val postRecycler = binding.homePostsRV
         postRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
-        var adapter = HomePostAdapter(requireContext(), emptyList(), idToken!!) { selectedPost ->
-            if (idToken != null) {
-                viewModel.loadUsers(idToken, selectedPost.email)
-            }
-        }
-
+        println("idToken | $idToken  |  email $email")
+        var adapter = HomePostAdapter(requireContext(), emptyList(), idToken, email,
+            itemOnClickListener = { selectedPost ->
+                if (idToken != null) {
+                    usersSharedViewModel.sendPost(selectedPost)
+                    findNavController().navigate(R.id.detailsFragment)
+                    viewModel.loadUsers(idToken, selectedPost.email)
+                }
+            },
+            likeItemClickListener = { postClicked, likedAlready ->
+                println("post clicked | ${postClicked.id}")
+                
+                if (likedAlready) {
+                    println("Already liked? insert | $likedAlready")
+                    viewModel.deletePostLike(idToken, email, postClicked)
+                } else {
+                    println("Already liked? delete  | $likedAlready")
+                    viewModel.insertPostLike(idToken, email, postClicked)
+                }
+            })
 
         viewModel.loadCategories(idToken)
         viewModel.categories.observe(viewLifecycleOwner) { categoriesList ->
@@ -93,10 +111,26 @@ class HomeFragment : Fragment() {
         val sortedPostsList = postsList.sortedByDescending { parseDate(it.createdAT) }
         println("sortedList | $sortedPostsList")
 
-        val adapter = HomePostAdapter(requireContext(), sortedPostsList, idToken) { selectedPost ->
-            usersSharedViewModel.sendPost(selectedPost)
-            findNavController().navigate(R.id.detailsFragment)
-        }
+        val adapter = HomePostAdapter(requireContext(), sortedPostsList, idToken, email,
+            itemOnClickListener = { selectedPost ->
+                if (idToken != null) {
+                    viewModel.loadUsers(idToken, selectedPost.email)
+                    usersSharedViewModel.sendPost(selectedPost)
+                    findNavController().navigate(R.id.detailsFragment)
+                }
+            },
+            likeItemClickListener = { postClicked, likedAlready ->
+                println("post clicked | ${postClicked.id}")
+
+                if (likedAlready) {
+                    println("Already liked? insert | $likedAlready")
+                    viewModel.deletePostLike(idToken, email, postClicked)
+                } else {
+                    println("Already liked? delete  | $likedAlready")
+                    viewModel.insertPostLike(idToken, email, postClicked)
+                }
+            })
+
         binding.homePostsRV.adapter = adapter
     }
 

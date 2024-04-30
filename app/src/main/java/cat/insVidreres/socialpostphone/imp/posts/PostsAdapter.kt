@@ -5,6 +5,7 @@ import android.service.autofill.Dataset
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.databinding.UserProfilePostBinding
 import cat.insVidreres.socialpostphone.imp.entity.Post
 import cat.insVidreres.socialpostphone.imp.entity.User
@@ -18,13 +19,21 @@ class PostsAdapter(
     val context: Context,
     var dataset: List<Post>,
     var user: User,
-    val itemOnClickListener: (Post) -> Unit
+    val itemOnClickListener: (Post) -> Unit,
+    val likeItemClickListener: (Post, Boolean) -> Unit
 ) :
     RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
 
     inner class PostViewHolder(var binding: UserProfilePostBinding) :
         RecyclerView.ViewHolder(binding.root) {
             fun bind(post: Post) {
+                var likedAlready = false
+
+                if (post.likes.contains(user.email)) {
+                    binding.postLikeButtonDrawable.setBackgroundResource(R.drawable.heart_filled)
+                    likedAlready = true
+                }
+
                 binding.profilePostUserNameTV.text = user.firstName
                 Glide.with(binding.profilePostUserIV.context).load(user.img).into(binding.profilePostUserIV)
                 binding.profilePostBodyTV.text = post.description
@@ -35,6 +44,21 @@ class PostsAdapter(
 
                 binding.root.setOnClickListener {
                     itemOnClickListener(post)
+                }
+
+
+                binding.postLikeButtonDrawable.setOnClickListener {
+                    likeItemClickListener(post, likedAlready)
+
+                    if (!likedAlready) {
+                        binding.postLikeButtonDrawable.setBackgroundResource(R.drawable.heart_filled)
+                        binding.postLikesAmountTV.text = (binding.postLikesAmountTV.text.toString().toInt() + 1).toString()
+                        likedAlready = true
+                    } else {
+                        binding.postLikeButtonDrawable.setBackgroundResource(R.drawable.heart_empty)
+                        binding.postLikesAmountTV.text = (binding.postLikesAmountTV.text.toString().toInt() - 1).toString()
+                        likedAlready = false
+                    }
                 }
             }
 

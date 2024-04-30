@@ -1,6 +1,7 @@
 package cat.insVidreres.socialpostphone.imp.details
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -25,6 +26,9 @@ class DetailsFragment : Fragment() {
     private lateinit var binding: FragmentDetailsBinding
     private val viewModel: DetailsViewModel by viewModels()
     private val usersSharedViewModel : UsersSharedViewModel by activityViewModels()
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var email: String
+    private lateinit var idToken: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,11 +45,10 @@ class DetailsFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        val sharedPreferences =
+        sharedPreferences =
             requireContext().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
-        val idToken = sharedPreferences.getString("idToken", "")
-        val email = sharedPreferences.getString("email", "")
-
+        idToken = sharedPreferences.getString("idToken", "").toString()
+        email = sharedPreferences.getString("email", "").toString()
 
         var commentsRecycler = binding.postCommentsRecyclerView
         commentsRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -61,12 +64,46 @@ class DetailsFragment : Fragment() {
                 binding.detailsPostCommentAmountTV.text = post.comments.size.toString()
                 binding.detailsPostLikesAmountTV.text = post.likes.size.toString()
 
+                var likedAlready = false
+
+                if (post.likes.contains(email)) {
+                    binding.detailsPostLikesButtonDrawable.setBackgroundResource(R.drawable.heart_filled)
+                    likedAlready = true
+                }
+
+
+                binding.detailsPostLikesButtonDrawable.setOnClickListener {
+                    if (!likedAlready) {
+                        viewModel.insertPostLike(idToken, email, post)
+                        binding.detailsPostLikesButtonDrawable.setBackgroundResource(R.drawable.heart_filled)
+                        binding.detailsPostLikesAmountTV.text = (binding.detailsPostLikesAmountTV.text.toString().toInt() + 1).toString()
+                        likedAlready = true
+                    } else {
+                        viewModel.deletePostLike(idToken, email, post)
+                        binding.detailsPostLikesButtonDrawable.setBackgroundResource(R.drawable.heart_empty)
+                        binding.detailsPostLikesAmountTV.text = (binding.detailsPostLikesAmountTV.text.toString().toInt() - 1).toString()
+                        likedAlready = false
+                    }
+                }
+
                 viewModel.loadComments(post)
 
                 viewModel.comments.observe(viewLifecycleOwner) { commentsList ->
+
                     println("comments received? | ${commentsList}")
                     val sortedPostsList = commentsList.sortedByDescending { parseDate(it.commentAT) }
-                    val adapter = DetailsAdapter(requireContext(), sortedPostsList, idToken)
+                    val adapter = DetailsAdapter(requireContext(), sortedPostsList, idToken, email,
+                        likeItemClickListener = { selectedComment, LikedAlready ->
+                            if (LikedAlready) {
+                                println("comment already liked | $LikedAlready")
+                                //TODO call viewModel deleteCommentLike()
+//                                viewModel.insertCommentLike(idToken, email, post, selectedComment)
+                            } else {
+                                println("comment not liked | $LikedAlready")
+                                //TODO call viewModel insertCommentLike()
+//                                viewModel.deleteCommentLike(idToken, email, post, selectedComment)
+                            }
+                        })
                     commentsRecycler.adapter = adapter
                 }
             }

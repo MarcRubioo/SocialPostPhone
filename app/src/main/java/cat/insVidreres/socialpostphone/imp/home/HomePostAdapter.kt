@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.api.Repository
 import cat.insVidreres.socialpostphone.imp.databinding.FragmentHomeBinding
 import cat.insVidreres.socialpostphone.imp.databinding.UserProfilePostBinding
@@ -19,13 +20,22 @@ class HomePostAdapter(
     val context: Context,
     var dataset: List<Post>,
     var idToken: String,
-    val itemOnClickListener: (Post) -> Unit
+    var email: String,
+    val itemOnClickListener: (Post) -> Unit,
+    val likeItemClickListener: (Post, Boolean) -> Unit
 ) :
     RecyclerView.Adapter<HomePostAdapter.HomePostViewHolder>() {
 
     inner class HomePostViewHolder(var binding: UserProfilePostBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(post: Post, position: Int) {
+            var likedAlready = false
+
+            println("does likes contain email? | ${post.likes.contains(email)}")
+            if (post.likes.contains(email)) {
+                binding.postLikeButtonDrawable.setBackgroundResource(R.drawable.heart_filled)
+                likedAlready = true
+            }
 
             binding.profilePostBodyTV.text = post.description
             binding.profilePostDateTV.text = formatDate(post.createdAT)
@@ -33,7 +43,7 @@ class HomePostAdapter(
             binding.postLikesAmountTV.text = post.likes.size.toString()
             binding.postCommentAmountTV.text = post.comments.size.toString()
 
-            //TODO check if user has already liked. If liked change drawable and insert into Firebase
+            //TODO check if user has already liked. If liked insert into Firebase
 
             Repository.getUserDetails(idToken, post.email,
                 onSuccess = { user ->
@@ -53,7 +63,26 @@ class HomePostAdapter(
             }
 
             binding.root.setOnClickListener {
-                itemOnClickListener(post)
+                itemOnClickListener.invoke(post)
+            }
+
+            binding.postLikeButtonDrawable.setOnClickListener {
+                println("Before")
+                likeItemClickListener.invoke(post, likedAlready)
+                println("After")
+
+                if (!likedAlready) {
+                    //Insert call viewModel insertLike()
+                    binding.postLikeButtonDrawable.setBackgroundResource(R.drawable.heart_filled)
+                    binding.postLikesAmountTV.text = (binding.postLikesAmountTV.text.toString().toInt() + 1).toString()
+                    likedAlready = true
+
+                } else if (likedAlready) {
+                    //Delete call viewModel deleteLike()
+                    binding.postLikeButtonDrawable.setBackgroundResource(R.drawable.heart_empty)
+                    binding.postLikesAmountTV.text = (binding.postLikesAmountTV.text.toString().toInt() - 1).toString()
+                    likedAlready = false
+                }
             }
         }
     }

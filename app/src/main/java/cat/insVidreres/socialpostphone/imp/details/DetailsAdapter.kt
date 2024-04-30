@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.api.Repository
 import cat.insVidreres.socialpostphone.imp.databinding.UserProfilePostBinding
 import cat.insVidreres.socialpostphone.imp.entity.Comment
+import cat.insVidreres.socialpostphone.imp.entity.Post
 import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -16,13 +18,28 @@ import java.util.Locale
 class DetailsAdapter(
     val context: Context,
     var dataset: List<Comment>,
-    var idToken: String
+    var idToken: String,
+    var email: String,
+    val likeItemClickListener: (Comment, Boolean) -> Unit
 ) :
     RecyclerView.Adapter<DetailsAdapter.DetailsViewHolder>() {
 
     inner class DetailsViewHolder(var binding: UserProfilePostBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(comment: Comment, position: Int) {
+            var likedAlready = false
+
+            if (comment.likes.contains(email)) {
+                println("email | $email")
+                println("comment likes | ${comment.likes}")
+                println("comment has email? | ${comment.likes.contains(email)}")
+                binding.postLikeButtonDrawable.setBackgroundResource(R.drawable.heart_filled)
+                likedAlready = true
+            }
+
+            binding.postLikesAmountTV.text = comment.likes.size.toString()
+//            binding.postCommentAmountTV.text = comment.comments.size.toString()
+
             binding.profilePostBodyTV.text = comment.desc
             if (!comment.commentAT.isNullOrEmpty()) {
                 binding.profilePostDateTV.text = formatDate(comment.commentAT)
@@ -44,6 +61,20 @@ class DetailsAdapter(
                 binding.bottomLinePost.visibility = View.VISIBLE
             } else {
                 binding.bottomLinePost.visibility = View.GONE
+            }
+
+            binding.postLikeButtonDrawable.setOnClickListener {
+                likeItemClickListener(comment, likedAlready)
+
+                if (!likedAlready) {
+                    binding.postLikeButtonDrawable.setBackgroundResource(R.drawable.heart_filled)
+                    binding.postLikesAmountTV.text = (binding.postLikesAmountTV.text.toString().toInt() + 1).toString()
+                    likedAlready = true
+                } else {
+                    binding.postLikeButtonDrawable.setBackgroundResource(R.drawable.heart_empty)
+                    binding.postLikesAmountTV.text = (binding.postLikesAmountTV.text.toString().toInt() - 1).toString()
+                    likedAlready = false
+                }
             }
         }
     }
