@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.databinding.FragmentFriendsProfileBinding
 import cat.insVidreres.socialpostphone.imp.entity.User
 import cat.insVidreres.socialpostphone.imp.mainActivity.UsersSharedViewModel
@@ -48,7 +49,8 @@ class FriendsProfileFragment : Fragment() {
         val email = sharedPreferences.getString("email", "")
 
         val friendPostRecycler = binding.profileFriendPostsRecyclerView
-        friendPostRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        friendPostRecycler.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
         var userReceived: User? = null;
 
@@ -60,7 +62,8 @@ class FriendsProfileFragment : Fragment() {
                 userReceived = user
 
                 binding.profileFriendNameTV.text = user.firstName
-                Glide.with(binding.profileFragmentFriendIV.context).load(user.img).into(binding.profileFragmentFriendIV)
+                Glide.with(binding.profileFragmentFriendIV.context).load(user.img)
+                    .into(binding.profileFragmentFriendIV)
                 viewModel.loadUserPosts(idToken, user.email)
 
             }
@@ -69,7 +72,12 @@ class FriendsProfileFragment : Fragment() {
         viewModel.userPost.observe(viewLifecycleOwner) { postsList ->
             val sortedPostsList = postsList.sortedByDescending { parseDate(it.createdAT) }
             println("user received from userPost observer? | ${sortedPostsList}")
-            var adapter = userReceived?.let { PostsAdapter(requireContext(), sortedPostsList, it) }
+            var adapter = userReceived?.let { user ->
+                PostsAdapter(requireContext(), sortedPostsList, user) { selectedPost ->
+                    usersSharedViewModel.sendPost(selectedPost)
+                    findNavController().navigate(R.id.detailsFragment)
+                }
+            }
             friendPostRecycler.adapter = adapter
         }
 

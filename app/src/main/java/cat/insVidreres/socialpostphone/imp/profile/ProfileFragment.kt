@@ -9,12 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.databinding.FragmentProfileBinding
 import cat.insVidreres.socialpostphone.imp.entity.User
+import cat.insVidreres.socialpostphone.imp.mainActivity.UsersSharedViewModel
 import cat.insVidreres.socialpostphone.imp.posts.PostsAdapter
 import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
@@ -26,6 +29,7 @@ class ProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
+    private val usersSharedViewModel: UsersSharedViewModel by activityViewModels()
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var email: String
@@ -70,7 +74,12 @@ class ProfileFragment : Fragment() {
             viewModel.userPost.observe(viewLifecycleOwner) { postsList ->
                 val sortedPostsList = postsList.sortedByDescending { parseDate(it.createdAT) }
                 println("user received from userPost observer? | ${sortedPostsList}")
-                var adapter = userReceived?.let { PostsAdapter(requireContext(), sortedPostsList, it) }
+                var adapter = userReceived?.let { user ->
+                    PostsAdapter(requireContext(), sortedPostsList, user) { selectedPost ->
+                        usersSharedViewModel.sendPost(selectedPost)
+                        findNavController().navigate(R.id.detailsFragment)
+                    }
+                }
                 userPostRecycler.adapter = adapter
             }
 

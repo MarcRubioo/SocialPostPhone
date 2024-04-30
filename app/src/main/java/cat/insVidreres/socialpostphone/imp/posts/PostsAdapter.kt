@@ -17,7 +17,8 @@ import java.util.Locale
 class PostsAdapter(
     val context: Context,
     var dataset: List<Post>,
-    var user: User
+    var user: User,
+    val itemOnClickListener: (Post) -> Unit
 ) :
     RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
 
@@ -31,7 +32,12 @@ class PostsAdapter(
 
                 binding.postLikesAmountTV.text = post.likes.size.toString()
                 binding.postCommentAmountTV.text = post.comments.size.toString()
+
+                binding.root.setOnClickListener {
+                    itemOnClickListener(post)
+                }
             }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
