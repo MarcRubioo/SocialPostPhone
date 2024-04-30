@@ -30,6 +30,11 @@ class HomePostAdapter(
             binding.profilePostBodyTV.text = post.description
             binding.profilePostDateTV.text = formatDate(post.createdAT)
 
+            binding.postLikesAmountTV.text = post.likes.size.toString()
+            binding.postCommentAmountTV.text = post.comments.size.toString()
+
+            //TODO check if user has already liked. If liked change drawable and insert into Firebase
+
             Repository.getUserDetails(idToken, post.email,
                 onSuccess = { user ->
                     binding.profilePostUserNameTV.text = user.firstName

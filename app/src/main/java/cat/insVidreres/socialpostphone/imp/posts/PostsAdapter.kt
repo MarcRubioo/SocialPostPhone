@@ -28,6 +28,9 @@ class PostsAdapter(
                 Glide.with(binding.profilePostUserIV.context).load(user.img).into(binding.profilePostUserIV)
                 binding.profilePostBodyTV.text = post.description
                 binding.profilePostDateTV.text = formatDate(post.createdAT)
+
+                binding.postLikesAmountTV.text = post.likes.size.toString()
+                binding.postCommentAmountTV.text = post.comments.size.toString()
             }
     }
 

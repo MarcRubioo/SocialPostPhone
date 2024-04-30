@@ -58,6 +58,8 @@ class DetailsFragment : Fragment() {
                 }
                 binding.detailsPostBodyTV.text = post.description
                 binding.profilePostDateTV.text = formatDate(post.createdAT)
+                binding.detailsPostCommentAmountTV.text = post.comments.size.toString()
+                binding.detailsPostLikesAmountTV.text = post.likes.size.toString()
 
                 viewModel.loadComments(post)
 
