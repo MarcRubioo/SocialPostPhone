@@ -77,7 +77,7 @@ class FriendsProfileFragment : Fragment() {
             val sortedPostsList = postsList.sortedByDescending { parseDate(it.createdAT) }
             println("user received from userPost observer? | ${sortedPostsList}")
             var adapter = userReceived?.let { user ->
-                PostsAdapter(requireContext(), sortedPostsList, user,
+                PostsAdapter(requireContext(), sortedPostsList, user, email,
                     itemOnClickListener = { selectedPost ->
                         usersSharedViewModel.sendPost(selectedPost)
                         findNavController().navigate(R.id.detailsFragment)

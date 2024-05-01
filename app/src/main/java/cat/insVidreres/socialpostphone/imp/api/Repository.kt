@@ -255,7 +255,12 @@ class Repository {
                                                         val commentAT = commentMap["commentAt"] as? String ?: ""
                                                         val likes = commentMap["likes"] as? MutableList<String> ?: mutableListOf()
 
-                                                        val comment = Comment(email, desc, commentAT, likes)
+                                                        var commentId = ""
+                                                        if (commentMap["id"] != null) {
+                                                            commentId = commentMap["id"].toString()
+                                                        }
+
+                                                        val comment = Comment(commentId, email, desc, commentAT, likes)
                                                         finalComments.add(comment)
                                                     }
                                                 } catch (e: Exception) {
@@ -494,8 +499,12 @@ class Repository {
                                                             val desc = commentMap["comment"] as? String ?: ""
                                                             val commentAT = commentMap["commentAt"] as? String ?: ""
                                                             val likes = commentMap["likes"] as? MutableList<String> ?: mutableListOf()
+                                                            var commentId = ""
+                                                            if (commentMap["id"] != null) {
+                                                                commentId = commentMap["id"].toString()
+                                                            }
 
-                                                            val comment = Comment(email, desc, commentAT, likes)
+                                                            val comment = Comment(commentId, email, desc, commentAT, likes)
                                                             finalComments.add(comment)
                                                         }
                                                     } catch (e: Exception) {
@@ -590,7 +599,12 @@ class Repository {
                                                         val commentAT = commentMap["commentAt"] as? String ?: ""
                                                         val likes = commentMap["likes"] as? MutableList<String> ?: mutableListOf()
 
-                                                        val comment = Comment(email, desc, commentAT, likes)
+                                                        var commentId = ""
+                                                        if (commentMap["id"] != null) {
+                                                            commentId = commentMap["id"].toString()
+                                                        }
+
+                                                        val comment = Comment(commentId, email, desc, commentAT, likes)
                                                         finalComments.add(comment)
                                                     }
                                                 } catch (e: Exception) {
@@ -780,6 +794,27 @@ class Repository {
                     .build()
 
                 val postService = retrofit.create(PostService::class.java)
+
+                postService.likeComment(idToken, email, post.id, comment.id)
+                    .enqueue(object : Callback<JsonResponse>{
+                        override fun onResponse(
+                            call: Call<JsonResponse>,
+                            response: Response<JsonResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val jsonResponse = response.body()
+                                if (jsonResponse != null) {
+                                    println("response from server | $jsonResponse")
+                                    onComplete()
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                            println("call was not successfull | ${t.message}")
+                            onFailure("Error calling categories | ${t.message}")
+                        }
+                    })
             }
         }
 
@@ -791,12 +826,35 @@ class Repository {
             onComplete: () -> Unit,
             onFailure: (error: String) -> Unit
         ) {
-            val retrofit = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
 
-            val postService = retrofit.create(PostService::class.java)
+                val postService = retrofit.create(PostService::class.java)
+
+                postService.deleteCommentLike(idToken, post.id, comment.id, email)
+                    .enqueue(object : Callback<JsonResponse> {
+                        override fun onResponse(
+                            call: Call<JsonResponse>,
+                            response: Response<JsonResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val jsonResponse = response.body()
+                                if (jsonResponse != null) {
+                                    println("response from server | $jsonResponse")
+                                    onComplete()
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                            println("call was not successfull | ${t.message}")
+                            onFailure("Error calling categories | ${t.message}")
+                        }
+                    })
+            }
         }
     }
 }

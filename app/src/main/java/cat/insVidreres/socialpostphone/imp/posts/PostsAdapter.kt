@@ -19,6 +19,7 @@ class PostsAdapter(
     val context: Context,
     var dataset: List<Post>,
     var user: User,
+    var email: String,
     val itemOnClickListener: (Post) -> Unit,
     val likeItemClickListener: (Post, Boolean) -> Unit
 ) :
@@ -29,7 +30,7 @@ class PostsAdapter(
             fun bind(post: Post) {
                 var likedAlready = false
 
-                if (post.likes.contains(user.email)) {
+                if (post.likes.contains(email)) {
                     binding.postLikeButtonDrawable.setBackgroundResource(R.drawable.heart_filled)
                     likedAlready = true
                 }

@@ -36,8 +36,12 @@ interface PostService {
     @DELETE("deleteLikePost/{idPost}")
     fun deleteLikePost(@Header("idToken") token: String, @Path("idPost") idPost: String, @Query("email") email: String): Call<JsonResponse>
 
-    @PUT("post/{postId}")
-    fun likeComment(@Header("idToken") token: String, @Body comment: Comment, @Path("postId") postId: String): Call<JsonResponse>
+    @PUT("addLikePostComment/{idPost}/{idComment}")
+    fun likeComment(@Header("idToken") token: String, @Body email: String, @Path("idPost") idPost: String, @Path("idComment") idComment: String): Call<JsonResponse>
+
+
+    @DELETE("deleteLikePostComment/{idPost}/{idComment}")
+    fun deleteCommentLike(@Header("idToken") token: String, @Path("idPost") idPost: String, @Path("idComment") idComment: String, @Query("email") email: String): Call<JsonResponse>
 
 
 }

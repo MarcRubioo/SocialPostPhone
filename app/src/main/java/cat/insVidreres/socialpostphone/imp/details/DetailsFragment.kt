@@ -97,11 +97,11 @@ class DetailsFragment : Fragment() {
                             if (LikedAlready) {
                                 println("comment already liked | $LikedAlready")
                                 //TODO call viewModel deleteCommentLike()
-//                                viewModel.insertCommentLike(idToken, email, post, selectedComment)
+                                viewModel.deleteCommentLike(idToken, email, post, selectedComment)
                             } else {
                                 println("comment not liked | $LikedAlready")
                                 //TODO call viewModel insertCommentLike()
-//                                viewModel.deleteCommentLike(idToken, email, post, selectedComment)
+                                viewModel.insertCommentLike(idToken, email, post, selectedComment)
                             }
                         })
                     commentsRecycler.adapter = adapter
