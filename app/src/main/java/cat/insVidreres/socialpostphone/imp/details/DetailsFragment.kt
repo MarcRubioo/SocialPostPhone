@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -16,6 +18,7 @@ import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.databinding.FragmentDetailsBinding
 import cat.insVidreres.socialpostphone.imp.mainActivity.UsersSharedViewModel
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -86,6 +89,48 @@ class DetailsFragment : Fragment() {
                     }
                 }
 
+
+                binding.imageContainer.removeAllViews()
+                val imageCount = post.images.size
+                println("imageAmount | $imageCount")
+                val isOddImageCount = imageCount % 2 != 0
+
+                post.images.forEachIndexed { index, imageUrl ->
+                    val imageView = ImageView(binding.root.context)
+                    val params = when {
+                        imageCount == 1 -> LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            2f
+                        )
+                        isOddImageCount -> LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            0,
+                            1f
+                        )
+                        index == 0 && isOddImageCount -> LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            0,
+                            2f
+                        )
+                        else -> LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            0,
+                            1f
+                        )
+                    }
+                    params.height = 220.dpToPx(binding.root.context) // Set maximum height for images
+                    params.marginEnd = if (index < imageCount - 1) 8.dpToPx(binding.root.context) else 0
+                    imageView.layoutParams = params
+                    Glide.with(binding.root.context)
+                        .load(imageUrl)
+                        .apply(RequestOptions().centerCrop())
+                        .into(imageView)
+                    binding.imageContainer.addView(imageView)
+                }
+
+
+
                 viewModel.loadComments(post)
 
                 viewModel.comments.observe(viewLifecycleOwner) { commentsList ->
@@ -96,11 +141,9 @@ class DetailsFragment : Fragment() {
                         likeItemClickListener = { selectedComment, LikedAlready ->
                             if (LikedAlready) {
                                 println("comment already liked | $LikedAlready")
-                                //TODO call viewModel deleteCommentLike()
                                 viewModel.deleteCommentLike(idToken, email, post, selectedComment)
                             } else {
                                 println("comment not liked | $LikedAlready")
-                                //TODO call viewModel insertCommentLike()
                                 viewModel.insertCommentLike(idToken, email, post, selectedComment)
                             }
                         })
@@ -111,6 +154,10 @@ class DetailsFragment : Fragment() {
 
 
         return binding.root
+    }
+
+    fun Int.dpToPx(context: Context): Int {
+        return (this * context.resources.displayMetrics.density).toInt()
     }
 
     private fun formatDate(timestamp: String): String {

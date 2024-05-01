@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.api.Repository
@@ -11,6 +13,7 @@ import cat.insVidreres.socialpostphone.imp.databinding.UserProfilePostBinding
 import cat.insVidreres.socialpostphone.imp.entity.Comment
 import cat.insVidreres.socialpostphone.imp.entity.Post
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale

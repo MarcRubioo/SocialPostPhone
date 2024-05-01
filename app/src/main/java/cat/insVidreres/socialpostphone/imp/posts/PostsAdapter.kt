@@ -4,12 +4,15 @@ import android.content.Context
 import android.service.autofill.Dataset
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.databinding.UserProfilePostBinding
 import cat.insVidreres.socialpostphone.imp.entity.Post
 import cat.insVidreres.socialpostphone.imp.entity.User
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -61,8 +64,51 @@ class PostsAdapter(
                         likedAlready = false
                     }
                 }
-            }
 
+
+                binding.imageContainer.removeAllViews()
+                val imageCount = post.images.size
+                println("imageAmount | $imageCount")
+                val isOddImageCount = imageCount % 2 != 0
+
+                post.images.forEachIndexed { index, imageUrl ->
+                    val imageView = ImageView(binding.root.context)
+                    val params = when {
+                        imageCount == 1 -> LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            2f
+                        )
+                        isOddImageCount -> LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            0,
+                            1f
+                        )
+                        index == 0 && isOddImageCount -> LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            0,
+                            2f
+                        )
+                        else -> LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            0,
+                            1f
+                        )
+                    }
+                    params.height = 220.dpToPx(binding.root.context) // Set maximum height for images
+                    params.marginEnd = if (index < imageCount - 1) 8.dpToPx(binding.root.context) else 0
+                    imageView.layoutParams = params
+                    Glide.with(binding.root.context)
+                        .load(imageUrl)
+                        .apply(RequestOptions().centerCrop())
+                        .into(imageView)
+                    binding.imageContainer.addView(imageView)
+                }
+            }
+    }
+
+    fun Int.dpToPx(context: Context): Int {
+        return (this * context.resources.displayMetrics.density).toInt()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
