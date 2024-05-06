@@ -59,7 +59,8 @@ class Repository {
                                             val userService =
                                                 retrofit.create(UserService::class.java)
 
-                                            userService.login(idToken)
+                                            val user = User("", email, password, "", "", 0, "")
+                                            userService.login(idToken, user)
                                                 .enqueue(object : Callback<JsonResponse> {
                                                     override fun onResponse(
                                                         call: Call<JsonResponse>,

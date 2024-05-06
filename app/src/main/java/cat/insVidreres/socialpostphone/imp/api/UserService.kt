@@ -20,7 +20,7 @@ interface UserService {
     fun login(@Body user: User): Call<JsonResponse>*/
 
     @POST("users/login")
-    fun login(@Header("idToken") token: String): Call<JsonResponse>
+    fun login(@Header("idToken") token: String, @Body user: User): Call<JsonResponse>
 
     @POST("users")
     fun register(@Body user: User): Call<JsonResponse>
