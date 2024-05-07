@@ -185,7 +185,9 @@ class Repository {
                                                 age = (userJson["age"] as? Double)?.toInt(),
                                                 phoneNumber = userJson["phoneNumber"] as? String,
                                                 img = userJson["img"] as String,
-                                                friendsList = userJson["friends"] as MutableList<User>
+                                                friendsList = userJson["friends"] as MutableList<User>,
+                                                followersList = userJson["followers"] as MutableList<User>,
+                                                followingList = userJson["following"] as MutableList<User>,
                                             )
 
                                             selectedUser = user
@@ -694,8 +696,11 @@ class Repository {
                                                         age = (friend["age"] as? Double)?.toInt(),
                                                         phoneNumber = friend["phoneNumber"] as? String,
                                                         img = friend["img"] as String,
-                                                        friendsList = friend["friends"] as MutableList<User>
+                                                        friendsList = friend["friends"] as MutableList<User>,
+                                                        followersList = friend["followers"] as MutableList<User>,
+                                                        followingList = friend["following"] as MutableList<User>,
                                                     )
+                                                    println("friend | $finalFriend")
                                                     friendsList.add(finalFriend)
                                                 }
                                                 onSuccess()

@@ -61,9 +61,8 @@ class ProfileFragment : Fragment() {
             viewModel.user.observe(viewLifecycleOwner) { user ->
                 binding.profileUserNameTV.text = user.firstName
                 Glide.with(binding.profileFragmentUserIV.context).load(user.img).into(binding.profileFragmentUserIV)
-                //TODO make user data class accept 2 arrays of string (followers, following) of user emails
-//                binding.profileFollowerAmount.text = user.followers.size.toString()
-//                binding.profileFollowingAmount.text = user.following.size.toString()
+                binding.profileFollowerAmount.text = user.followersList.size.toString() + " followers"
+                binding.profileFollowingAmount.text = user.followingList.size.toString() + " following"
                 userReceived = user
             }
 
