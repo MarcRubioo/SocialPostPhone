@@ -49,6 +49,7 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun updateUserPFP(idToken: String, email: String, imgData: ByteArray?) {
+        println("img perfil "+imgData)
         viewModelScope.launch {
             Repository.updateUserProfilePicture(idToken, email, imgData,
                 onComplete = {

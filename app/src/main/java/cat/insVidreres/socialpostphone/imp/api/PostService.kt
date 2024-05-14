@@ -1,13 +1,10 @@
 package cat.insVidreres.socialpostphone.imp.api
 
-import cat.insVidreres.socialpostphone.imp.entity.Comment
-import cat.insVidreres.socialpostphone.imp.entity.Post
+import cat.insVidreres.socialpostphone.imp.addpost.ImagePostByte
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.GET
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.DELETE
 import retrofit2.http.Header
 import retrofit2.http.PUT
@@ -23,12 +20,8 @@ interface PostService {
 
     @GET("userPosts")
     fun getUserPosts(@Header("idToken") token: String, @Query("email") email: String): Call<JsonResponse>
-
-    @POST("posts")
-    fun uploadPost(@Header("idToken") token: String, @Body post: Post): Call<JsonResponse>
-
-    @POST("post")
-    fun uploadComment(@Header("idToken") token: String, @Body post: Post): Call<JsonResponse>
+    @POST("postsAndroid")
+    fun createPost(@Header("idToken") token: String, @Body body: ImagePostByte): Call<JsonResponse>
 
     @PUT("addLikePost/{idPost}")
     fun likePost(@Header("idToken") token: String, @Path("idPost") idPost: String, @Body email: String): Call<JsonResponse>

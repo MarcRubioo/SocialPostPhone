@@ -1,8 +1,8 @@
 package cat.insVidreres.socialpostphone.imp.api
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
+import cat.insVidreres.socialpostphone.imp.addpost.ImagePostByte
 import cat.insVidreres.socialpostphone.imp.entity.Comment
 import cat.insVidreres.socialpostphone.imp.entity.Post
 import cat.insVidreres.socialpostphone.imp.entity.User
@@ -16,11 +16,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.Objects
 
 class Repository {
     companion object {
-        private const val BASE_URL = "http://169.254.180.117:8080/api/"
+        private const val BASE_URL = "http://192.168.56.2:8080/api/"
         var userToken: String = ""
         var usersList = mutableListOf<User>()
         lateinit var selectedUser: User
@@ -257,19 +256,16 @@ class Repository {
                                                         val desc = commentMap["comment"] as? String ?: ""
                                                         val commentAT = commentMap["commentAt"] as? String ?: ""
                                                         val likes = commentMap["likes"] as? MutableList<String> ?: mutableListOf()
-
                                                         var commentId = ""
                                                         if (commentMap["id"] != null) {
                                                             commentId = commentMap["id"].toString()
                                                         }
-
                                                         val comment = Comment(commentId, email, desc, commentAT, likes)
                                                         finalComments.add(comment)
                                                     }
                                                 } catch (e: Exception) {
                                                     println("error parsing the comments | ${e.message}")
                                                 }
-
 
                                                 val finalPost = Post(
                                                     post["id"] as String,
@@ -721,18 +717,57 @@ class Repository {
         }
 
 
+
+
         fun createPost(
             idToken: String,
             post: Post,
-            onSuccess: () -> Unit,
-            onFailure: (error: String) -> Unit
-        ) {
-
+            imgData: List<ByteArray>?,
+            onSuccess: (Boolean) -> Unit,
+            onFailure: (Boolean) -> Unit
+        ){
             GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
 
+                val postWithImg = imgData?.let {
+                    ImagePostByte(
+                        post,
+                        it
+                    )
+                }
+
+                val postService = retrofit.create(PostService::class.java)
+
+                if (postWithImg != null) {
+                    postService.createPost(idToken, postWithImg ).enqueue(object : Callback<JsonResponse> {
+                        override fun onResponse(
+                            call: Call<JsonResponse>,
+                            response: Response<JsonResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val jsonResponse = response.body()
+                                val postResult = jsonResponse?.data
+                                if (postResult != null && jsonResponse.responseNo == 200) {
+                                    onSuccess(true)
+                                }
+                            } else {
+                                println("Algo salio mal: " + response)
+
+                                onFailure(false)
+                            }
+                        }
+
+                        override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                            onFailure(false)
+                        }
+                    })
+                }
             }
-
         }
+
 
 
         fun getCategories(
@@ -862,5 +897,7 @@ class Repository {
                     })
             }
         }
+
+
     }
 }
