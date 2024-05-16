@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class Repository {
     companion object {
-        private const val BASE_URL = "http://192.168.56.2:8080/api/"
+        private const val BASE_URL = "http://169.254.180.117:8080/api/"
         var userToken: String = ""
         var usersList = mutableListOf<User>()
         lateinit var selectedUser: User

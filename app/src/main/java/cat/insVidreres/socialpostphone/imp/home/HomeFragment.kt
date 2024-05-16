@@ -62,10 +62,10 @@ class HomeFragment : Fragment() {
             likeItemClickListener = { postClicked, likedAlready ->
                 println("post clicked | ${postClicked.id}")
                 
-                if (likedAlready) {
+                if (likedAlready || !postClicked.likes.contains(email)) {
                     println("Already liked? insert | $likedAlready")
                     viewModel.deletePostLike(idToken, email, postClicked)
-                } else {
+                } else if (!likedAlready || postClicked.likes.contains(email)) {
                     println("Already liked? delete  | $likedAlready")
                     viewModel.insertPostLike(idToken, email, postClicked)
                 }

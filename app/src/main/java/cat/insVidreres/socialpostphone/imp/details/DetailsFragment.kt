@@ -70,8 +70,13 @@ class DetailsFragment : Fragment() {
                 var likedAlready = false
 
                 if (post.likes.contains(email)) {
+                    println("Details liked already if? | " + email)
                     binding.detailsPostLikesButtonDrawable.setBackgroundResource(R.drawable.heart_filled)
                     likedAlready = true
+                } else {
+                    println("Details liked already else? | " + email)
+                    binding.detailsPostLikesButtonDrawable.setBackgroundResource(R.drawable.heart_empty)
+                    likedAlready = false
                 }
 
 
