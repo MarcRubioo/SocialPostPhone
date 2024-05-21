@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cat.insVidreres.socialpostphone.imp.api.Repository
 import cat.insVidreres.socialpostphone.imp.entity.Post
+import cat.insVidreres.socialpostphone.imp.entity.User
 import kotlinx.coroutines.launch
 
 class SearchProfileViewModel : ViewModel() {
@@ -49,6 +50,59 @@ class SearchProfileViewModel : ViewModel() {
                 },
                 onFailure = { error ->
                     println("error deleting like into post | $error")
+                })
+        }
+    }
+
+
+    fun addUserToFriends(idToken: String, email: String, user: User, onSuccess: (User) -> Unit) {
+        viewModelScope.launch {
+            Repository.addFriendToUser(idToken, email, user,
+                onComplete = { user ->
+                    println("HJBISFGSV | $user")
+                    onSuccess(user)
+                },
+                onFailure = { error ->
+                    println("Error adding friend at viewmodel $error")
+                })
+        }
+    }
+
+
+    fun deleteUserFriend(idToken: String, email: String, friendEmail: String, onSuccess: (User) -> Unit) {
+        viewModelScope.launch {
+            Repository.deleteFriendToUser(idToken, email, friendEmail,
+                onComplete = { user ->
+                    onSuccess(user)
+                },
+                onFailure = { error ->
+                    println("Error deleting friend at viewmodel $error")
+                })
+        }
+    }
+
+
+    fun addFollowerToUser(idToken: String, email: String, user: User, onSuccess: (User) -> Unit) {
+        viewModelScope.launch {
+            Repository.followUser(idToken, email, user,
+                onComplete = { user ->
+                    onSuccess(user)
+                },
+                onFailure = { error ->
+                    println("Error adding follower at viewModel | $error")
+                })
+        }
+    }
+
+
+    fun deleteFollowerToUser(idToken: String, email: String, friendEmail: String, onSuccess: (User) -> Unit) {
+        viewModelScope.launch {
+            Repository.unfollowUser(idToken, email, friendEmail,
+                onComplete = { user ->
+                    onSuccess(user)
+                },
+                onFailure = { error ->
+                    println("Error adding follower at viewModel | $error")
                 })
         }
     }

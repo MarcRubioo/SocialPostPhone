@@ -57,7 +57,10 @@ class SearchProfileFragment : Fragment() {
         friendPostRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
-        var userReceived: User? = null;
+        var userReceived: User? = null
+
+        var alreadyFriends = false
+        var alreadyFollowed = false
 
         println("user received? | ${usersSharedViewModel.user.value}")
 
@@ -73,6 +76,63 @@ class SearchProfileFragment : Fragment() {
                     .into(binding.profileFragmentFriendIV)
                 viewModel.loadUserPosts(idToken, user.email)
 
+
+//                if (user.friendsList.any { it.email == email }) {
+//                    binding.userFriendImageDrawable.setBackgroundResource(R.drawable.friend_already_added_drawable)
+//                    alreadyFriends = true
+//                } else {
+//                    binding.userFriendImageDrawable.setBackgroundResource(R.drawable.add_friend_drawable)
+//                    alreadyFriends = false
+//                }
+//
+//                if (user.followersList.any { it.email == email }) {
+//                    binding.userFollowButton.text = "Following"
+//                    alreadyFollowed = true
+//                } else {
+//                    binding.userFollowButton.text = "Follow"
+//                    alreadyFollowed = false
+//                }
+
+
+//                binding.userFriendImageDrawable.setOnClickListener {
+//                    if (!alreadyFriends) {
+//                        viewModel.addUserToFriends(idToken, email, user) { userToAdd ->
+//                            //TODO add the user from user.friendsList
+//                            user.friendsList.add(userToAdd)
+//
+//                            binding.userFriendImageDrawable.setBackgroundResource(R.drawable.friend_already_added_drawable)
+//                            alreadyFriends = true
+//                        }
+//                    } else {
+//                        viewModel.deleteUserFriend(idToken, email, user.email) { userToRemove ->
+//                            //TODO remove the user from user.friendsList
+//                            user.friendsList.remove(userToRemove)
+//
+//                            binding.userFriendImageDrawable.setBackgroundResource(R.drawable.add_friend_drawable)
+//                            alreadyFriends = false
+//                        }
+//                    }
+//                }
+//
+//                binding.userFollowButton.setOnClickListener {
+//                    if (!alreadyFollowed) {
+//                        //TODO add the user from user.followersList
+//                        viewModel.addFollowerToUser(idToken, email, user) { userToAdd ->
+//                            user.followersList.add(userToAdd)
+//
+//                            binding.userFollowButton.text = "Following"
+//                            alreadyFollowed = true
+//                        }
+//                    } else {
+//                        //TODO remove the user from user.followersList
+//                        viewModel.deleteFollowerToUser(idToken, email, user.email) { userToRemove ->
+//                            user.followersList.remove(userToRemove)
+//
+//                            binding.userFollowButton.text = "Follow"
+//                            alreadyFollowed = false
+//                        }
+//                    }
+//                }
             }
         }
 

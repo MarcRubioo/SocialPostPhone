@@ -18,6 +18,7 @@ class ViewModelSearch: ViewModel() {
             Repository.loadAllUsers(idToken, email,
                 onSuccess = {
                     _UserList.value = Repository.usersList
+                    println("sussy | ${Repository.usersList}")
                 },
                 onFailure = { error ->
                     println("Error getting friends | $error")

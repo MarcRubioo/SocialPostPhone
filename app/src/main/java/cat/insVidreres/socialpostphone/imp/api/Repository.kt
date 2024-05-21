@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class Repository {
     companion object {
-        private const val BASE_URL = "http://192.168.56.2:8080/api/"
+        private const val BASE_URL = "http://169.254.180.117:8080/api/"
         var userToken: String = ""
         var usersList = mutableListOf<User>()
         lateinit var selectedUser: User
@@ -749,8 +749,76 @@ class Repository {
 
                                 userFromServer.forEach { user ->
                                     val userMap = user as? Map<*, *>
+
                                     if (userMap != null) {
                                         val userEmail = userMap["email"] as? String
+                                        val friendsArray = user["friends"] as MutableList<Map<*, *>>
+                                        var finalFriends = mutableListOf<User>()
+
+                                        val followersArray = user["followers"] as MutableList<Map<*, *>>
+                                        var finalFollowers = mutableListOf<User>()
+
+                                        val followingArray = user["following"] as MutableList<Map<*, *>>
+                                        var finalFollowing = mutableListOf<User>()
+
+                                        if (friendsArray.size > 0) {
+                                            friendsArray.forEach { friend ->
+                                                val finalFriend = User(
+                                                    id = friend["id"] as? String,
+                                                    email = friend["email"] as String,
+                                                    password = friend["password"] as String,
+                                                    firstName = friend["firstName"] as? String,
+                                                    lastName = friend["lastName"] as? String,
+                                                    age = (friend["age"] as? Double)?.toInt(),
+                                                    phoneNumber = friend["phoneNumber"] as? String,
+                                                    img = friend["img"] as String,
+                                                    friendsList = friend["friends"] as MutableList<User>,
+                                                    followersList = friend["followers"] as MutableList<User>,
+                                                    followingList = friend["following"] as MutableList<User>,
+                                                )
+                                                finalFriends.add(finalFriend)
+                                            }
+                                        }
+
+                                        if (followersArray.size > 0) {
+                                            followersArray.forEach { follower ->
+                                                val finalFollower = User(
+                                                    id = follower["id"] as? String,
+                                                    email = follower["email"] as String,
+                                                    password = follower["password"] as String,
+                                                    firstName = follower["firstName"] as? String,
+                                                    lastName = follower["lastName"] as? String,
+                                                    age = (follower["age"] as? Double)?.toInt(),
+                                                    phoneNumber = follower["phoneNumber"] as? String,
+                                                    img = follower["img"] as String,
+                                                    friendsList = follower["friends"] as MutableList<User>,
+                                                    followersList = follower["followers"] as MutableList<User>,
+                                                    followingList = follower["following"] as MutableList<User>,
+                                                )
+                                                finalFollowers.add(finalFollower)
+                                            }
+                                        }
+
+                                        if (followingArray.size > 0) {
+                                            followingArray.forEach { following ->
+                                                println("temp | $userEmail  $following")
+                                                val finalFollowee = User(
+                                                    id = following["id"] as? String,
+                                                    email = following["email"] as String,
+                                                    password = following["password"] as String,
+                                                    firstName = following["firstName"] as? String,
+                                                    lastName = following["lastName"] as? String,
+                                                    age = (following["age"] as? Double)?.toInt(),
+                                                    phoneNumber = following["phoneNumber"] as? String,
+                                                    img = following["img"] as String,
+                                                    friendsList = following["friends"] as MutableList<User>,
+                                                    followersList = following["followers"] as MutableList<User>,
+                                                    followingList = following["following"] as MutableList<User>,
+                                                )
+                                                finalFollowing.add(finalFollowee)
+                                            }
+                                        }
+
                                         if (userEmail != email) {
                                             val finalUser = User(
                                                 id = userMap["id"] as? String,
@@ -761,9 +829,9 @@ class Repository {
                                                 age = (userMap["age"] as? Double)?.toInt(),
                                                 phoneNumber = userMap["phoneNumber"] as? String,
                                                 img = userMap["img"] as String,
-                                                friendsList = userMap["friends"] as MutableList<User>,
-                                                followersList = mutableListOf(),
-                                                followingList = mutableListOf()
+                                                friendsList = finalFriends,
+                                                followersList = finalFollowers,
+                                                followingList = finalFollowing
                                             )
                                             usersList.add(finalUser)
                                         }
@@ -786,7 +854,6 @@ class Repository {
                 })
             }
         }
-
 
 
 
@@ -972,5 +1039,265 @@ class Repository {
         }
 
 
+
+        fun addFriendToUser(
+            idToken: String,
+            email: String,
+            user: User,
+            onComplete: (User) -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val userService =
+                    retrofit.create(UserService::class.java)
+
+                userService.addFriendToUser(idToken, email, user)
+                    .enqueue(object : Callback<JsonResponse> {
+                        override fun onResponse(
+                            call: Call<JsonResponse>,
+                            response: Response<JsonResponse>
+                        ) {
+
+                            if (response.isSuccessful) {
+                                val jsonResponse = response.body()
+                                val userList = jsonResponse?.data
+
+                                if (userList != null && userList.isNotEmpty()) {
+                                    val userJson = userList[0] as? Map<*, *>
+
+                                    if (userJson != null) {
+                                        val user = User(
+                                            id = userJson["id"] as? String,
+                                            email = userJson["email"] as String,
+                                            password = userJson["password"] as String,
+                                            firstName = userJson["firstName"] as? String,
+                                            lastName = userJson["lastName"] as? String,
+                                            age = (userJson["age"] as? Double)?.toInt(),
+                                            phoneNumber = userJson["phoneNumber"] as? String,
+                                            img = userJson["img"] as String,
+                                            friendsList = userJson["friends"] as MutableList<User>,
+                                            followersList = userJson["followers"] as MutableList<User>,
+                                            followingList = userJson["following"] as MutableList<User>,
+                                        )
+
+                                        println("Good=? | $user")
+                                        onComplete(user)
+
+                                    } else {
+                                        onFailure("Error parsing user data")
+                                    }
+                                } else {
+                                    onFailure("User list is empty or null")
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                            println("call was not successfull | ${t.message}")
+                            onFailure("Error calling addFriend | ${t.message}")
+                        }
+                    })
+            }
+        }
+
+
+        fun deleteFriendToUser(
+            idToken: String,
+            email: String,
+            friendEmail: String,
+            onComplete: (User) -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val userService =
+                    retrofit.create(UserService::class.java)
+
+                userService.deleteFriendToUser(idToken, email, friendEmail)
+                    .enqueue(object : Callback<JsonResponse> {
+                        override fun onResponse(
+                            call: Call<JsonResponse>,
+                            response: Response<JsonResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val jsonResponse = response.body()
+                                val userList = jsonResponse?.data
+
+                                if (userList != null && userList.isNotEmpty()) {
+                                    val userJson = userList[0] as? Map<*, *>
+
+                                    if (userJson != null) {
+                                        val user = User(
+                                            id = userJson["id"] as? String,
+                                            email = userJson["email"] as String,
+                                            password = userJson["password"] as String,
+                                            firstName = userJson["firstName"] as? String,
+                                            lastName = userJson["lastName"] as? String,
+                                            age = (userJson["age"] as? Double)?.toInt(),
+                                            phoneNumber = userJson["phoneNumber"] as? String,
+                                            img = userJson["img"] as String,
+                                            friendsList = userJson["friends"] as MutableList<User>,
+                                            followersList = userJson["followers"] as MutableList<User>,
+                                            followingList = userJson["following"] as MutableList<User>,
+                                        )
+
+                                        println("Good=? | $user")
+                                        onComplete(user)
+
+                                    } else {
+                                        onFailure("Error parsing user data")
+                                    }
+                                } else {
+                                    onFailure("User list is empty or null")
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                            println("call was not successfull | ${t.message}")
+                            onFailure("Error calling deleteFriend | ${t.message}")
+                        }
+                    })
+            }
+        }
+
+
+        fun followUser(
+            idToken: String,
+            email: String,
+            user: User,
+            onComplete: (User) -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val userService =
+                    retrofit.create(UserService::class.java)
+
+                userService.addFollower(idToken, email, user)
+                    .enqueue(object: Callback<JsonResponse> {
+                        override fun onResponse(
+                            call: Call<JsonResponse>,
+                            response: Response<JsonResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val jsonResponse = response.body()
+                                val userList = jsonResponse?.data
+
+                                if (userList != null && userList.isNotEmpty()) {
+                                    val userJson = userList[0] as? Map<*, *>
+
+                                    if (userJson != null) {
+                                        val user = User(
+                                            id = userJson["id"] as? String,
+                                            email = userJson["email"] as String,
+                                            password = userJson["password"] as String,
+                                            firstName = userJson["firstName"] as? String,
+                                            lastName = userJson["lastName"] as? String,
+                                            age = (userJson["age"] as? Double)?.toInt(),
+                                            phoneNumber = userJson["phoneNumber"] as? String,
+                                            img = userJson["img"] as String,
+                                            friendsList = userJson["friends"] as MutableList<User>,
+                                            followersList = userJson["followers"] as MutableList<User>,
+                                            followingList = userJson["following"] as MutableList<User>,
+                                        )
+
+                                        println("Good=? | $user")
+                                        onComplete(user)
+
+                                    } else {
+                                        onFailure("Error parsing user data")
+                                    }
+                                } else {
+                                    onFailure("User list is empty or null")
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                            println("call was not successfull | ${t.message}")
+                            onFailure("Error calling followUser | ${t.message}")
+                        }
+                    })
+            }
+        }
+
+
+        fun unfollowUser(
+            idToken: String,
+            email: String,
+            userEmail: String,
+            onComplete: (User) -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val userService =
+                    retrofit.create(UserService::class.java)
+
+                userService.deleteFollower(idToken, email, userEmail)
+                    .enqueue(object: Callback<JsonResponse> {
+                        override fun onResponse(
+                            call: Call<JsonResponse>,
+                            response: Response<JsonResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val jsonResponse = response.body()
+                                val userList = jsonResponse?.data
+
+                                if (userList != null && userList.isNotEmpty()) {
+                                    val userJson = userList[0] as? Map<*, *>
+
+                                    if (userJson != null) {
+                                        val user = User(
+                                            id = userJson["id"] as? String,
+                                            email = userJson["email"] as String,
+                                            password = userJson["password"] as String,
+                                            firstName = userJson["firstName"] as? String,
+                                            lastName = userJson["lastName"] as? String,
+                                            age = (userJson["age"] as? Double)?.toInt(),
+                                            phoneNumber = userJson["phoneNumber"] as? String,
+                                            img = userJson["img"] as String,
+                                            friendsList = userJson["friends"] as MutableList<User>,
+                                            followersList = userJson["followers"] as MutableList<User>,
+                                            followingList = userJson["following"] as MutableList<User>,
+                                        )
+
+                                        println("Good=? | $user")
+                                        onComplete(user)
+
+                                    } else {
+                                        onFailure("Error parsing user data")
+                                    }
+                                } else {
+                                    onFailure("User list is empty or null")
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                            println("call was not successfull | ${t.message}")
+                            onFailure("Error calling followUser | ${t.message}")
+                        }
+                    })
+            }
+        }
     }
 }
