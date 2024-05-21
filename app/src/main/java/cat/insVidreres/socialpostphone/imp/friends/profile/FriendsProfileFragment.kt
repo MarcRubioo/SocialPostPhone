@@ -66,8 +66,8 @@ class FriendsProfileFragment : Fragment() {
                 userReceived = user
 
                 binding.profileFriendNameTV.text = user.firstName
-                binding.profileFriendFollowerAmount.text = user.followersList.size.toString() + " followers"
-                binding.profileFriendFollowingAmount.text = user.followingList.size.toString() + " following"
+                binding.profileFriendFollowerAmount.text = user.followersList.size.toString() + " seguidores"
+                binding.profileFriendFollowingAmount.text = user.followingList.size.toString() + " siguiendo"
                 Glide.with(binding.profileFragmentFriendIV.context).load(user.img)
                     .into(binding.profileFragmentFriendIV)
                 viewModel.loadUserPosts(idToken, user.email)

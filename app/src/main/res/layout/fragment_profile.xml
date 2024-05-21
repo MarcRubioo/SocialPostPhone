@@ -78,7 +78,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Editar"
+                    android:text="Ver"
                     android:textColor="@color/azul"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -92,14 +92,26 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/profileUserPostsRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="500dp"
-                android:layout_marginTop="100dp"
+                android:layout_height="520dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileUsersTopContainer"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/textPubli"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/textPubli"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Publicaciones"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.053"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileUsersTopContainer" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

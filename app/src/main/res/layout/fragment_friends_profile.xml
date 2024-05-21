@@ -23,7 +23,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:navigationIcon="?android:attr/homeAsUpIndicator"
-                app:title="Friend"
+                app:title="Amigo"
                 app:titleTextColor="@color/black"
                 />
 
@@ -90,33 +90,28 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <LinearLayout
-                android:id="@+id/profileFriendDescriptionContainer"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:orientation="horizontal"
+            <TextView
+                android:id="@+id/textPubli"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Publicaciones"
+                android:textSize="18dp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.053"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileFriendsTopContainer">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="start"
-                    android:text="Description of user"
-                    android:textSize="15sp" />
-
-            </LinearLayout>
+                app:layout_constraintTop_toBottomOf="@+id/profileFriendsTopContainer" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/profileFriendPostsRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="530dp"
+                android:layout_height="480dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileFriendDescriptionContainer" />
+                app:layout_constraintTop_toBottomOf="@+id/textPubli" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

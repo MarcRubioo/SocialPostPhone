@@ -9,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import cat.insVidreres.socialpostphone.imp.databinding.FragmentUserDetailsBinding
 import cat.insVidreres.socialpostphone.imp.entity.User
 import cat.insVidreres.socialpostphone.imp.login.LoginActivity
@@ -28,6 +30,15 @@ class UserDetailsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentUserDetailsBinding.inflate(inflater)
+
+        //Handle top back arrow
+        val toolbar = binding.toolbar
+        toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+
+        //Handle hardware back button
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            findNavController().navigateUp()
+        }
 
         sharedPreferences =
             requireContext().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)

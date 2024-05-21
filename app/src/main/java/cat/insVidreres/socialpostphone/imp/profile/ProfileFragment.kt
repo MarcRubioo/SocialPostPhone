@@ -60,8 +60,8 @@ class ProfileFragment : Fragment() {
             viewModel.user.observe(viewLifecycleOwner) { user ->
                 binding.profileUserNameTV.text = user.firstName
                 Glide.with(binding.profileFragmentUserIV.context).load(user.img).into(binding.profileFragmentUserIV)
-                binding.profileFollowerAmount.text = user.followersList.size.toString() + " followers"
-                binding.profileFollowingAmount.text = user.followingList.size.toString() + " following"
+                binding.profileFollowerAmount.text = user.followersList.size.toString() + " seguidores"
+                binding.profileFollowingAmount.text = user.followingList.size.toString() + " seguiendo"
                 userReceived = user
             }
 

@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.api.Repository
+import cat.insVidreres.socialpostphone.imp.databinding.UserCommentPostBinding
 import cat.insVidreres.socialpostphone.imp.databinding.UserProfilePostBinding
 import cat.insVidreres.socialpostphone.imp.entity.Comment
 import cat.insVidreres.socialpostphone.imp.entity.Post
@@ -27,7 +28,7 @@ class DetailsAdapter(
 ) :
     RecyclerView.Adapter<DetailsAdapter.DetailsViewHolder>() {
 
-    inner class DetailsViewHolder(var binding: UserProfilePostBinding) :
+    inner class DetailsViewHolder(var binding: UserCommentPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(comment: Comment, position: Int) {
             var likedAlready = false
@@ -102,7 +103,7 @@ class DetailsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailsViewHolder {
-        val binding = UserProfilePostBinding.inflate(LayoutInflater.from(context), parent, false)
+        val binding = UserCommentPostBinding.inflate(LayoutInflater.from(context), parent, false)
         return DetailsViewHolder(binding)
     }
 
