@@ -19,13 +19,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class Repository {
     companion object {
-        private const val BASE_URL = "http://169.254.180.117:8080/api/"
+        private const val BASE_URL = "http://192.168.56.2:8080/api/"
         var userToken: String = ""
         var usersList = mutableListOf<User>()
         lateinit var selectedUser: User
         var userPostsList = mutableListOf<Post>()
         var postsList = mutableListOf<Post>()
         var friendsList = mutableListOf<User>()
+        var allUsers = mutableListOf<User>()
         var categoriesList = mutableListOf<String>()
         lateinit var serverResponse: JsonResponse
         var userImage : String = ""
@@ -715,6 +716,71 @@ class Repository {
                     })
             }
         }
+
+        fun loadAllUsers(
+            idToken: String,
+            email: String,
+            onSuccess: () -> Unit,
+            onFailure: (error: String) -> Unit
+        ) {
+            GlobalScope.launch(Dispatchers.IO) { // Consider using viewModelScope or lifecycleScope if possible
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+
+                val userService = retrofit.create(UserService::class.java)
+
+                userService.getAllUsers(idToken).enqueue(object : Callback<JsonResponse> {
+                    override fun onResponse(call: Call<JsonResponse>, response: Response<JsonResponse>) {
+                        if (response.isSuccessful) {
+                            val jsonResponse = response.body()
+                            val userFromServer = jsonResponse?.data
+
+                            if (userFromServer != null && userFromServer.isNotEmpty()) {
+                                usersList.clear()
+
+                                userFromServer.forEach { user ->
+                                    val userMap = user as? Map<*, *>
+                                    if (userMap != null) {
+                                        val userEmail = userMap["email"] as? String
+                                        if (userEmail != email) {
+                                            val finalUser = User(
+                                                id = userMap["id"] as? String,
+                                                email = userMap["email"] as String,
+                                                password = userMap["password"] as String,
+                                                firstName = userMap["firstName"] as? String,
+                                                lastName = userMap["lastName"] as? String,
+                                                age = (userMap["age"] as? Double)?.toInt(),
+                                                phoneNumber = userMap["phoneNumber"] as? String,
+                                                img = userMap["img"] as String,
+                                                friendsList = userMap["friends"] as MutableList<User>,
+                                                followersList = mutableListOf(),
+                                                followingList = mutableListOf()
+                                            )
+                                            usersList.add(finalUser)
+                                        }
+                                    }
+                                }
+                                onSuccess()
+                            } else {
+                                onFailure("No users found in the response")
+                            }
+                        } else {
+                            onFailure("Response not successful: ${response.message()}")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<JsonResponse>, t: Throwable) {
+                        println("Error | ${t.message}")
+                        t.printStackTrace()
+                        onFailure("Error | ${t.message}")
+                    }
+                })
+            }
+        }
+
+
 
 
 

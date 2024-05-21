@@ -31,6 +31,9 @@ interface UserService {
     @GET("user/friends")
     fun getUserFriends(@Header("idToken") token: String, @Query("email") email: String): Call<JsonResponse>
 
+    @GET("users")
+    fun getAllUsers(@Header("idToken") token: String): Call<JsonResponse>
+
     @PUT("user/pfp")
     fun updateUserPFP(@Header("idToken") token: String, @Body body: UpdatePFPRequest): Call<JsonResponse>
 }
