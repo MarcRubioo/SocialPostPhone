@@ -111,6 +111,13 @@ class Repository {
 
         }
 
+        fun logoutUser(callback: (Boolean) -> Unit) {
+            GlobalScope.launch(Dispatchers.IO) {
+                FirebaseAuth.getInstance().signOut()
+                callback(true)
+            }
+        }
+
 
         fun registerUser(user: User, onSuccess: (Boolean) -> Unit, onFailure: () -> Unit) {
 

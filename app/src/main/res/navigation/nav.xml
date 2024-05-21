@@ -33,7 +33,11 @@
         android:id="@+id/profileFragment"
         android:name="cat.insVidreres.socialpostphone.imp.profile.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_userDetailsFragment"
+            app:destination="@id/userDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/detailsFragment"
         android:name="cat.insVidreres.socialpostphone.imp.details.DetailsFragment"
@@ -48,4 +52,8 @@
         android:id="@+id/searchProfileFragment"
         android:name="cat.insVidreres.socialpostphone.imp.search.profile.SearchProfileFragment"
         android:label="SearchProfileFragment" />
+    <fragment
+        android:id="@+id/userDetailsFragment"
+        android:name="cat.insVidreres.socialpostphone.imp.userDetails.UserDetailsFragment"
+        android:label="UserDetailsFragment" />
 </navigation>

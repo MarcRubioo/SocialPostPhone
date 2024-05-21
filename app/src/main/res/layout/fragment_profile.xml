@@ -73,39 +73,33 @@
                     app:layout_constraintStart_toEndOf="@+id/profileFollowerAmount"
                     app:layout_constraintTop_toBottomOf="@+id/profileUserNameTV" />
 
+                <TextView
+                    android:id="@+id/edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Editar"
+                    android:textColor="@color/azul"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.956"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-            <LinearLayout
-                android:id="@+id/profileUserDescriptionContainer"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:orientation="horizontal"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                app:layout_constraintTop_toBottomOf="@+id/profileUsersTopContainer"
-                >
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="start"
-                    android:text="Description of user"
-                    android:textSize="15sp"
-                    />
-
-            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/profileUserPostsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="500dp"
+                android:layout_marginTop="100dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileUserDescriptionContainer"
-                />
+                app:layout_constraintTop_toBottomOf="@+id/profileUsersTopContainer"
+                app:layout_constraintVertical_bias="0.0" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

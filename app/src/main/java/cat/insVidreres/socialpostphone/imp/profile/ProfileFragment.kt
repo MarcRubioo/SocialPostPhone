@@ -13,7 +13,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import cat.insVidreres.socialpostphone.imp.R
 import cat.insVidreres.socialpostphone.imp.databinding.FragmentProfileBinding
 import cat.insVidreres.socialpostphone.imp.entity.User
@@ -68,6 +67,10 @@ class ProfileFragment : Fragment() {
 
             viewModel.userImg.observe(viewLifecycleOwner) { url ->
                 Glide.with(binding.profileFragmentUserIV.context).load(url).into(binding.profileFragmentUserIV)
+            }
+
+            binding.edit.setOnClickListener {
+                findNavController().navigate(R.id.action_profileFragment_to_userDetailsFragment)
             }
 
             viewModel.userPost.observe(viewLifecycleOwner) { postsList ->
